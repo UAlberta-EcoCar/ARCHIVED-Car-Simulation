@@ -21,8 +21,12 @@ class Car_c:
     GearInertia = 0
     
     RollingResistanceCoefficient = 0
-    BearingResistance = 0 #N
-
+    TireDrag = 0
+    
+    BearingDragCoefficient = 0 #N
+    BearingBoreDiameter = 0
+    BearingDrag = 0    
+    
     AreodynamicDragCoefficient = 0
     AirDrag = 0
     
@@ -65,8 +69,17 @@ class Car_c:
     def calc_AirDrag(self,AirDensity,Speed):
         AirDrag = 0.5*self.AreodynamicDragCoefficient*self.FrontalArea*AirDensity*math.pow(Speed,2)
         return(AirDrag)
-        
-		
+    
+    @jit
+    def calc_BearingDrag(self,BearingDragCoefficient,Mass,BearingBore,WheelDiameter):
+        BearingDrag = BearingDragCoefficient*Mass*9.81*BearingBore/WheelDiameter
+        return(BearingDrag)
+    
+    @jit
+    def calc_TireDrag(self,RollingResistanceCoefficient,Mass):
+        TireDrag = RollingResistanceCoefficient*Mass*9.81
+        return(TireDrag)
+  
     ## Plotting ##
     def plot_DistanceTime(self):
         plt.figure()

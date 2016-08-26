@@ -90,5 +90,6 @@ class SuperCapacitor_c:
         plt.plot(self.TimeEllapsed,self.Current)
         plt.xlabel('Times (S)')
         plt.ylabel('Current (Amps)')
+        plt.title('SuperCaps')
         plt.show()
         plt.savefig(self.OutputFolder + '\\' + 'SuperCapCurrentTime.png')

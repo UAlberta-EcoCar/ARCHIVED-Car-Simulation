@@ -44,7 +44,7 @@ def run_Simulation(motor,fuelcell,car,track,supercap,DataPoints,TimeInterval):
         motor.Voltage[n] = supercap.Voltage[n]
         
         car.AirDrag[n] = car.calc_AirDrag(track.AirDensity,car.Speed[n])
-        car.Acceleration[n] = (motor.Torque[n]/car.WheelDiameter*2*car.GearRatio*car.GearEfficiency-car.Mass*math.sin(track.calc_Incline(car.DistanceTravelled[n-1])/180*np.pi)*9.81-car.AirDrag[n]-car.RollingResistanceCoefficient-car.BearingResistance) / car.Mass
+        car.Acceleration[n] = (motor.Torque[n]/car.WheelDiameter*2*car.GearRatio*car.GearEfficiency-car.Mass*math.sin(track.calc_Incline(car.DistanceTravelled[n-1])/180*np.pi)*9.81-car.AirDrag[n]-car.TireDrag-car.BearingDrag) / car.Mass
         #stop car from moving backwards if oposing forces are too high
         if car.Acceleration[n] < 0:
             if car.Speed[n] <= 0:
