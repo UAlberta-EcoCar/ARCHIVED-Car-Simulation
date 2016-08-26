@@ -30,7 +30,7 @@ def run_Simulation(motor,fuelcell,car,track,supercap,DataPoints,TimeInterval):
         motor.Torque[n],motor.Current[n] = motor.calc_MotorTorqueCurrent(motor.Voltage[n-1],motor.Speed[n-1],Throttle)
         
         #motor and Aux  drains caps
-        supercap.Charge[n] = supercap.DrainCaps(supercap.Charge[n-1],motor.Current[n]+fuelcell.AuxCurrent,TimeInterval)
+        supercap.Charge[n] = supercap.DrainCaps(supercap.Charge[n-1],motor.Current[n]+2+fuelcell.AuxCurrent,TimeInterval)
                 
         #fuel cell supplies caps
         fuelcell.StackCurrent[n] = fuelcell.calc_StackCurrent(fuelcell.StackVoltage[n-1])
@@ -74,7 +74,8 @@ def run_Simulation(motor,fuelcell,car,track,supercap,DataPoints,TimeInterval):
     car.AverageMilage = car.DistanceTravelled / 1000 / (fuelcell.StackEnergyConsumed / 1000 / 1000 / 3.6) #km / kWh
     
 ## Car Performance Plots ##
-def plot_PowerCurves(fuelcell,motor,supercaps):
+def plot_PowerCurves(fuelcell,motor,supercaps,OutputFolder):
+    plt.figure()
     plt.plot(fuelcell.TimeEllapsed,fuelcell.StackPowerOut,label='FuelCell')
     plt.plot(motor.TimeEllapsed,motor.PowerIn,label='MotorIn')
     plt.plot(motor.TimeEllapsed,motor.PowerOut,label='MotorOut')
@@ -84,4 +85,4 @@ def plot_PowerCurves(fuelcell,motor,supercaps):
     plt.title('Power Time Series Comparison')
     plt.legend()
     plt.show()
-    plt.savefig('coolfig.pdf')
+    plt.savefig(OutputFolder + '\\' + 'PowerOutputs.png')

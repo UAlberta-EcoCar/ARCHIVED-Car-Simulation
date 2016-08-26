@@ -49,26 +49,26 @@ function[] = motorsim()
 
 %MOTOR CONSTANTS
 kV=250; %voltage constant, in rpm/Volt
-eff_winding=0.90; %winding efficiency
+eff_winding=1;%0.90; %winding efficiency
 res_winding=80; %winding resistance, in milliOhms
-Imax_motor=80; %maximum short term motor current, in A
+Imax_motor=60; %maximum short term motor current, in A
 Vmax_motor=11100; %maximum motor speed, in rpm
 I_o=2; %motor idling current, in A
 
 %FUEL CELL PARAMETERS
-cellN=50; %number of cells
-cellArea=250; %cell area, in cm^2
-cellRes=0.62; %cell area resistivity, in Ohm*cm^2
-alpha=0.6; %charge transfer coefficient
+cellN=46; %number of cells
+cellArea=145; %cell area, in cm^2
+cellRes=0.36; %cell area resistivity, in Ohm*cm^2
+alpha=0.45; %charge transfer coefficient
 i_o=0.04; %exchange current density, in mA/cm^2
-cellVoc=1.005; %cell open circuit voltage, in V
-Vinitial=45; %initial ultracapacitor voltage
-Vdiode=0.7; %diode voltage drop at typical operating currents, in V
+cellVoc=1.02; %cell open circuit voltage, in V
+Vinitial=42; %initial ultracapacitor voltage
+Vdiode=0.5; %diode voltage drop at typical operating currents, in V
 C=19.3; %ultracapacitor capacitance, in F
 cellVtheo=1.48; %cell theoretical open circuit voltage, based on HHV
 
 %CAR PARAMETERS
-Mcar=310; %mass of car and driver, in kg
+Mcar=245; %mass of car and driver, in kg
 Dwheel=56; %diameter of wheel, in cm
 Hcar=1.2; %height of car at widest point, in m
 Wcar=1.67; %width of car at widest point, in m
@@ -79,11 +79,11 @@ incline=0; %road incline, in degrees
 C_d=0.3; %aerodynamic drag coefficient
 C_rr=0.01; %coefficient of rolling resistance
 C_br=10; %constant drag force ('bearing resistance'), in N
-k_gear=28; %gearing ratio
+k_gear=29; %gearing ratio
 eff_diff=90; %differential efficiency, in %
 
 %SIMULATION PARAMETERS
-tstep=0.05; %time step, in seconds
+tstep=0.01; %time step, in seconds
 tstop=120; %stop time, in seconds
 errormax=0.01; %maximum error in node currents, in A
 makeplots=1; %should the script generate plots?
@@ -236,6 +236,7 @@ for i=2:Npoints
     FCEfficiency(i)=FCVoltage(i)/(cellN*cellVtheo);
     MotorEfficiency(i)=MotorTorque(i)*MotorSpeed(i)*2*pi/60/((MotorSpeed(i)/kV+MotorCurrent(i)*res_winding)*MotorCurrent(i));
     
+    disp(MotorCurrent(i))
 end
 
 if makeplots
@@ -296,6 +297,9 @@ if makeplots
     xlabel('Time (s)');
     ylabel('Efficiency');
     
+    figure(9)
+    plot(MotorSpeed/60*2*3.14159,MotorTorque)
+    title('Motor Torque Speed')
 end
 
 

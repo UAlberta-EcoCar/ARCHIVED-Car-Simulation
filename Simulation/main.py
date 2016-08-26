@@ -12,8 +12,9 @@ from Car_c import Car_c
 from SuperCapacitor_c import SuperCapacitor_c
 import Simulation
 
+OutputFolder = 'output'
 
-SimulationTime = 600 #seconds
+SimulationTime = 120 #seconds
 TimeInterval = 0.01 #time step/integration interval #make a lot smaller than total inertia to decrease motor speed integration error
 TrackLength = 4500 # meters
 
@@ -23,7 +24,7 @@ DataPoints = math.floor(SimulationTime/TimeInterval)
 #### MOTOR ####
 
 #create motor object
-motor = Motor_c(SimulationTime,TimeInterval)
+motor = Motor_c(SimulationTime,TimeInterval,OutputFolder)
 
 ## Set Motor Constants ##
 #Velocity constant, Torque constant, BackEMFConstant are all related only need one https://en.wikipedia.org/wiki/Motor_constants
@@ -42,7 +43,7 @@ motor.plot_TorqueSpeedCurve()
 ## FUELCELL ##
 
 #create fuelcell object
-fuelcell = FuelCell_c(SimulationTime,TimeInterval)
+fuelcell = FuelCell_c(SimulationTime,TimeInterval,OutputFolder)
 #Set FuelCell parameters
 fuelcell.CellNumber = 46
 fuelcell.CellArea = 145 #cm2
@@ -51,7 +52,7 @@ fuelcell.Alpha = 0.45
 fuelcell.ExchangeCurrentDensity = 0.04
 fuelcell.CellOCVoltage = 1.02 #open circuit voltage
 fuelcell.DiodeVoltageDrop = 0.5
-fuelcell.AuxCurrent = 2 #current consumed by controllers, fans etc (everything except motor)
+fuelcell.AuxCurrent = 0#2 #current consumed by controllers, fans etc (everything except motor)
 fuelcell.build_VoltageCurrentCurve()
 fuelcell.plot_FCCurve()
 
@@ -59,21 +60,8 @@ fuelcell.plot_FCCurve()
 ## TRACK ##
 
 #create track object
-track = Track_c(SimulationTime,TimeInterval,TrackLength)
+track = Track_c(SimulationTime,TimeInterval,TrackLength,OutputFolder)
 #set track parameters
-track.Incline[1:500] = 0 #deg
-track.Incline[500:750] = 5
-track.Incline[750:1000] = -5
-track.Incline[1000:1250] = 5
-track.Incline[1250:1500] = -5
-track.Incline[1500:1750] = 5
-track.Incline[1750:2000] = -5
-track.Incline[2000:2250] = 0
-track.Incline[2500:2750] = 5
-track.Incline[2750:3000] = -5
-track.Incline[3000:3500] = 5
-track.Incline[3500:4000] = -5
-track.Incline[4000:4500] = 0
 track.smoothtrack(5)
 track.plot_Profile()
 track.RelativeHumidity = 50 #%
@@ -85,14 +73,14 @@ track.calc_AirDensity()
 ## SUPERCAPS ##
 
 #create super capacitor object
-supercaps = SuperCapacitor_c(SimulationTime,TimeInterval)
+supercaps = SuperCapacitor_c(SimulationTime,TimeInterval,OutputFolder)
 #set super capacitor parameters
 supercaps.Capacitance = 19.3
 
 #### CAR ####
 
 #create car object
-car = Car_c(SimulationTime,TimeInterval)
+car = Car_c(SimulationTime,TimeInterval,OutputFolder)
 
 ## set car parameters ##
 # NumberOfTeethDriven / NumberOfTeethDriving
@@ -141,4 +129,4 @@ supercaps.plot_VoltageCharge()
 supercaps.plot_ChargeTime()
 supercaps.plot_CurrentTime()
 
-Simulation.plot_PowerCurves(fuelcell,motor,supercaps)
+Simulation.plot_PowerCurves(fuelcell,motor,supercaps,OutputFolder)

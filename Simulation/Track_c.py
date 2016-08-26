@@ -8,6 +8,8 @@ import matplotlib.pyplot as plt
 class Track_c:
     """ Class containing model of Track Conditions """
     
+    OutputFolder = ''
+    
     #Constants
     AirPressure = 0
     RelativeHumidity = 0
@@ -24,9 +26,11 @@ class Track_c:
     #Variable arrays
     
         
-    def __init__(self,SimulationTime,TimeInterval,TrackLength):
+    def __init__(self,SimulationTime,TimeInterval,TrackLength,OutputFolder):
         #class constructor
         print('Track Object Created')
+        
+        self.OutputFolder = OutputFolder
         
         self.DataPoints = math.floor(SimulationTime/TimeInterval) 
         self.SimulationTime = SimulationTime
@@ -54,8 +58,10 @@ class Track_c:
         return(incline)
     
     def plot_Profile(self):
+        plt.figure()
         plt.plot(self.Incline)
         plt.ylabel('Slope (deg)')
         plt.xlabel('Distance (m)')
         plt.title('Track Profile')
         plt.show()
+        plt.savefig(self.OutputFolder + '\\' + 'TrackProfile.png')

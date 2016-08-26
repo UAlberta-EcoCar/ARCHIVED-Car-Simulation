@@ -8,6 +8,8 @@ import matplotlib.pyplot as plt
 class Car_c:
     """ Class containing model of Car """
     
+    OutputFolder = ''
+    
     #Constants
     Mass = 0  #kg
     
@@ -40,9 +42,11 @@ class Car_c:
     #equations
     
         
-    def __init__(self,SimulationTime,TimeInterval):
+    def __init__(self,SimulationTime,TimeInterval,OutputFolder):
         #class constructor
         print('Car Object Created')
+        
+        self.OutputFolder = OutputFolder
         
         self.SimulationTime = SimulationTime
         self.Timeinterval = TimeInterval
@@ -65,27 +69,34 @@ class Car_c:
 		
     ## Plotting ##
     def plot_DistanceTime(self):
+        plt.figure()
         plt.plot(self.TimeEllapsed, self.DistanceTravelled)
         plt.xlabel('Time')
         plt.ylabel('Distance (m)')
         plt.title('Car')
         plt.show()
+        plt.savefig(self.OutputFolder + '\\' + 'CarDistanceTime.png')
         
     def plot_SpeedTime(self):
+        plt.figure()
         plt.plot(self.TimeEllapsed, self.Speed*3.6)
         plt.xlabel('Time')
         plt.ylabel('Speed (km.h)')
         plt.title('Car')
         plt.show()
+        plt.savefig(self.OutputFolder + '\\' + 'CarSpeedTime.png')
         
     def plot_AccelerationTime(self):
+        plt.figure()
         plt.plot(self.TimeEllapsed, self.Acceleration)
         plt.xlabel('Time')
         plt.ylabel('Acceleration (m/s2)')
         plt.title('Car')
         plt.show()
+        plt.savefig(self.OutputFolder + '\\' + 'CarAccelerationTime.png')
         
     def plot_Milage(self):
+        plt.figure()
         plt.plot(self.TimeEllapsed, self.InstantaneousMilage)
         plt.xlabel('Time')
         plt.ylabel('Milage km/kwh')
@@ -96,11 +107,13 @@ class Car_c:
         plt.ylabel('Milage km/kwh')
         plt.title('Average Milage')
         plt.show()
+        plt.savefig(self.OutputFolder + '\\' + 'CarMilage.png')
         
     def plot_Drag(self):
+        plt.figure()
         plt.plot(self.TimeEllapsed,self.AirDrag)
         plt.xlabel('Time (S)')
         plt.ylabel('Drag (N)')
         plt.title('Air Drag')
         plt.show()
-        
+        plt.savefig(self.OutputFolder + '\\' + 'CarDrag.png')

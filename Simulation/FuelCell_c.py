@@ -9,6 +9,8 @@ import matplotlib.pyplot as plt
 class FuelCell_c:
     """ Class Constaining Model of FuelCell """
     
+    OutputFolder = ''
+    
     #Constants
     CellNumber = 0
     CellArea = 0
@@ -43,9 +45,11 @@ class FuelCell_c:
     
     A = 0
 
-    def __init__(self,SimulationTime,TimeInterval):
+    def __init__(self,SimulationTime,TimeInterval,OutputFolder):
         #class constructor
         print('FuelCell Object Created')
+
+        self.OutputFolder = OutputFolder        
         
         self.SimulationTime = SimulationTime
         self.TimeInterval = TimeInterval
@@ -72,9 +76,13 @@ class FuelCell_c:
             current = self.CurveI[i]
             b = current / ( self.CellArea * self.ExchangeCurrentDensity / 1000)
             if b > 0:
-                self.CurveV[i] = self.CellNumber * (self.CellOCVoltage - current*self.CellResistance/self.CellArea - A*np.log(b))
+                c = A*np.log(b)
+                if c > 0:
+                    self.CurveV[i] = self.CellNumber * (self.CellOCVoltage - current*self.CellResistance/self.CellArea - A*np.log(b))
+                else:
+                    self.CurveV[i] = self.CellNumber * (self.CellOCVoltage - current*self.CellResistance/self.CellArea - 0 )
             else:
-                self.CurveV[i] = self.CellNumber * (self.CellOCVoltage - current*self.CellResistance/self.CellArea)
+                self.CurveV[i] = self.CellNumber * (self.CellOCVoltage - current*self.CellResistance/self.CellArea - 0)
                 
                 
     @jit
@@ -131,30 +139,37 @@ class FuelCell_c:
     
     #Plotting
     def plot_FCCurve(self):
+        plt.figure()
         plt.plot( self.CurveI, self.CurveV )
         plt.xlabel('Stack Current')
         plt.ylabel('Stack Voltage')
         plt.title('Fuel Cell curve')
         plt.show()
+        plt.savefig(self.OutputFolder + '\\' + 'FuelcellVoltageCurrentCurve.png')
         
     def plot_StackVoltageCurrent(self):
+        plt.figure()
         plt.plot( self.StackCurrent, self.StackVoltage )
         plt.xlabel('Stack Current (A)')
         plt.ylabel('Stack Voltage (V)')
         plt.title('FuelCell')
         plt.show()
+        plt.savefig(self.OutputFolder + '\\' + 'FuelcellVoltageCurrent.png')
         
     def plot_StackEfficiency(self):
+        plt.figure()
         plt.plot( self.TimeEllapsed , self.StackEfficiency )    
         plt.xlabel('Time (s)')
         plt.ylabel('Stack Efficiency')
         plt.title('FuelCell')
         plt.show()
+        plt.savefig(self.OutputFolder + '\\' + 'FuelcellEfficiency.png')
         
     def plot_StackCurrentTime(self):
+        plt.figure()
         plt.plot(self.TimeEllapsed,self.StackCurrent)
         plt.xlabel('Time')
         plt.ylabel('Stack Current')
         plt.title('Fuel Cell')
         plt.show()
-        
+        plt.savefig(self.OutputFolder + '\\' + 'FuelcellStackCurrentTime.png')

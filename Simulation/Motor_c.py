@@ -8,6 +8,8 @@ from numba import jit
 
 class Motor_c:
     """ Class containing model of Motor """
+
+    OutputFolder = ''
     
     DataPoints = 0
     TimeInterval = 0
@@ -54,9 +56,11 @@ class Motor_c:
     
     
     ## FUNCTIONS ##
-    def __init__(self,SimulationTime,TimeInterval):
+    def __init__(self,SimulationTime,TimeInterval,OutputFolder):
         #class constructor
         print('Motor Object Created')
+        
+        self.OutputFolder = OutputFolder
         
         self.SimulationTime = SimulationTime
         self.TimeInterval = TimeInterval
@@ -178,6 +182,7 @@ class Motor_c:
         speed = np.arange(0,ms,1)
         Torque1 = -1*self.BackEMFConstant*self.TorqueConstant/self.WindingResistance*speed+36*self.TorqueConstant/self.WindingResistance
         Torque2 = -1*self.BackEMFConstant*self.TorqueConstant/self.WindingResistance*speed+36*self.TorqueConstant/self.WindingResistance-self.TorqueLoss
+        plt.figure()
         plt.plot(speed,Torque1,label='Theoretical')
         plt.plot(speed,Torque2,label='With Losses')
         plt.title('Motor Curve at 36 V')
@@ -185,53 +190,67 @@ class Motor_c:
         plt.ylabel('Torque (Nm)')
         plt.legend()
         plt.show()
+        plt.savefig(self.OutputFolder + '\\' + 'TorqueSpeedCurve.png')
         
     def plot_TorqueSpeed(self):
+        plt.figure()
         plt.plot( self.Speed, self.Torque )
         plt.xlabel('Speed (rad/s)')
         plt.ylabel('Torque (Nm')
         plt.title('Motor')
         plt.show()
-
+        plt.savefig(self.OutputFolder + '\\' + 'MotorTorqueSpeed.png')        
+        
     def plot_EfficiencySpeed(self):
+        plt.figure()
         plt.plot( self.Speed, self.Efficiency )
         plt.xlabel('Speed (rad/s)')
         plt.ylabel('Efficiency')
         plt.title('Motor')
         plt.show()
+        plt.savefig(self.OutputFolder + '\\' + 'MotorEfficiencySpeed.png')
         
     def plot_PowerSpeed(self):
+        plt.figure()
         plt.plot( self.Speed, self.PowerIn , self.Speed , self.PowerOut )
         plt.xlabel('Speed (rad/s)')
         plt.ylabel('Power (W)')
         plt.title('Motor')
         plt.show()
+        plt.savefig(self.OutputFolder + '\\' + 'MotorPowerSpeed.png')
     
     def plot_SpeedTime(self):
+        plt.figure()
         plt.plot(self.TimeEllapsed, self.Speed)
         plt.xlabel('Time (s)')
         plt.ylabel('Speed (rad/s)')
         plt.title('Motor')
         plt.show()
+        plt.savefig(self.OutputFolder + '\\' + 'MotorSpeedTime.png')
     
     def plot_TorqueTime(self):
+        plt.figure()
         plt.plot(self.TimeEllapsed,self.Torque)
         plt.xlabel('Time (s)')
         plt.ylabel('Torque (Nm)')
         plt.title('Motor')
         plt.show()
+        plt.savefig(self.OutputFolder + '\\' + 'MotorTorqueTime.png')
 
     def plot_CurrentTime(self):
+        plt.figure()
         plt.plot(self.TimeEllapsed, self.Current)
         plt.xlabel('Time (s)')
         plt.ylabel('Current (A)')
         plt.title('Motor')
         plt.show()
+        plt.savefig(self.OutputFolder + '\\' + 'MotorCurrentTime.png')        
         
     def plot_VoltageTime(self):
+        plt.figure()
         plt.plot(self.TimeEllapsed, self.Voltage)
         plt.xlabel('Time (s)')
         plt.ylabel('Voltage (V)')
         plt.title('Motor')
         plt.show()
-        
+        plt.savefig(self.OutputFolder + '\\' + 'MotorVoltageTime.png')

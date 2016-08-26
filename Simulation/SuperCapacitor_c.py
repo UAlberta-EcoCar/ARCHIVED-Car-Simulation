@@ -8,6 +8,8 @@ import matplotlib.pyplot as plt
 class SuperCapacitor_c:
     """ Class containing model of Super Capacitor """
     
+    OutputFolder = ''
+    
     #Constants
     Capacitance = 0;
 	
@@ -25,9 +27,11 @@ class SuperCapacitor_c:
     #equations
     
         
-    def __init__(self,SimulationTime,TimeInterval):
+    def __init__(self,SimulationTime,TimeInterval,OutputFolder):
         #class constructor
         print('Super Capacitor Object Created')
+        
+        self.OutputFolder = OutputFolder
         
         self.SimulationTime = SimulationTime
         self.TimeInterval = TimeInterval
@@ -64,21 +68,27 @@ class SuperCapacitor_c:
 
     #plotting
     def plot_VoltageCharge(self):
+        plt.figure()
         plt.plot(self.Charge,self.Voltage)
         plt.ylabel('Voltage')
         plt.xlabel('Charge')
         plt.title('SuperCaps')
         plt.show()
+        plt.savefig(self.OutputFolder + '\\' + 'SuperCapVoltageCharge.png')
         
     def plot_ChargeTime(self):
+        plt.figure()
         plt.plot(self.TimeEllapsed,self.Charge)
         plt.xlabel('Time')
         plt.ylabel('Charge')
         plt.title('SuperCaps')
         plt.show()
+        plt.savefig(self.OutputFolder + '\\' + 'SuperCapChargeTime.png')
         
     def plot_CurrentTime(self):
+        plt.figure()
         plt.plot(self.TimeEllapsed,self.Current)
         plt.xlabel('Times (S)')
         plt.ylabel('Current (Amps)')
         plt.show()
+        plt.savefig(self.OutputFolder + '\\' + 'SuperCapCurrentTime.png')
