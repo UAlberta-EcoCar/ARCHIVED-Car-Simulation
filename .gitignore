@@ -49,3 +49,7 @@ Temporary Items
 *.spyderworkspace
 *.spyderproject
 *.bak
+*.asv
+*.fig
+*.png
+*.mat

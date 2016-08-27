@@ -50,7 +50,7 @@ function[] = motorsim()
 %MOTOR CONSTANTS
 kV=250; %voltage constant, in rpm/Volt
 eff_winding=1;%0.90; %winding efficiency
-res_winding=80; %winding resistance, in milliOhms
+res_winding=500; %winding resistance, in milliOhms
 Imax_motor=60; %maximum short term motor current, in A
 Vmax_motor=11100; %maximum motor speed, in rpm
 I_o=2; %motor idling current, in A
@@ -68,7 +68,7 @@ C=19.3; %ultracapacitor capacitance, in F
 cellVtheo=1.48; %cell theoretical open circuit voltage, based on HHV
 
 %CAR PARAMETERS
-Mcar=245; %mass of car and driver, in kg
+Mcar=170+75; %mass of car and driver, in kg
 Dwheel=56; %diameter of wheel, in cm
 Hcar=1.2; %height of car at widest point, in m
 Wcar=1.67; %width of car at widest point, in m
