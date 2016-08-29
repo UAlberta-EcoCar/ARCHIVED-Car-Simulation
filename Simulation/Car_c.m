@@ -78,40 +78,46 @@ classdef Car_c < handle %goofy matlab class inheritance
         end
 
         %% Plotting %%
-        function plot_DistanceTime(obj)
+        function plot_DistanceTime(obj,savef)
             figure()
             plot(obj.TimeEllapsed, obj.DistanceTravelled)
             xlabel('Time')
             ylabel('Distance (m)')
             title('Car')            
-            savefig([obj.OutputFolder '\\' 'CarDistanceTime.fig'])
+            if savef
+                savefig([obj.OutputFolder '\\' 'CarDistanceTime.fig'])
+            end
             saveas(gcf,[obj.OutputFolder '\\' 'CarDistanceTime.png'])
             close
         end
 
-        function plot_SpeedTime(obj)
+        function plot_SpeedTime(obj,savef)
             figure()
             plot(obj.TimeEllapsed, obj.Speed*3.6)
             xlabel('Time')
             ylabel('Speed (km.h)')
             title('Car')
-            savefig([obj.OutputFolder '\\' 'CarSpeedTime.fig'])
+            if savef
+                savefig([obj.OutputFolder '\\' 'CarSpeedTime.fig'])
+            end
             saveas(gcf,[obj.OutputFolder '\\' 'CarSpeedTime.png'])
             close
         end
 
-        function plot_AccelerationTime(obj)
+        function plot_AccelerationTime(obj,savef)
             figure()
             plot(obj.TimeEllapsed, obj.Acceleration)
             xlabel('Time')
             ylabel('Acceleration (m/s2)')
             title('Car')
-            savefig([obj.OutputFolder '\\' 'CarAccelerationTime.fig'])
+            if savef
+                savefig([obj.OutputFolder '\\' 'CarAccelerationTime.fig'])
+            end
             saveas(gcf,[obj.OutputFolder '\\' 'CarAccelerationTime.png'])
             close
         end
 
-        function plot_Milage(obj)
+        function plot_Milage(obj,savef)
             figure()
             plot(obj.TimeEllapsed, obj.InstantaneousMilage)
             xlabel('Time')
@@ -120,12 +126,14 @@ classdef Car_c < handle %goofy matlab class inheritance
             hold on 
             plot(obj.TimeEllapsed, obj.AverageMilage)
             legend('InstantaneousMilage','Average Milage')
-            savefig([obj.OutputFolder '\\' 'CarMilage.fig'])
+            if savef
+                savefig([obj.OutputFolder '\\' 'CarMilage.fig'])
+            end
             saveas(gcf,[obj.OutputFolder '\\' 'CarMilage.png'])
             close
         end
 
-        function plot_Drag(obj)
+        function plot_Drag(obj,savef)
             figure()
             plot(obj.TimeEllapsed,obj.AirDrag)
             hold on
@@ -135,7 +143,9 @@ classdef Car_c < handle %goofy matlab class inheritance
             ylabel('Drag (N)')
             title('Drag Forces')
             legend('AirDrag','BearingDrag','TireDrag')
-            savefig([obj.OutputFolder '\\' 'CarDrag.fig'])
+            if savef
+                savefig([obj.OutputFolder '\\' 'CarDrag.fig'])
+            end
             saveas(gcf,[obj.OutputFolder '\\' 'CarDrag.png'])
             close
         end

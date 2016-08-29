@@ -60,35 +60,41 @@ classdef SuperCapacitor_c < handle %goofy matlab class inheritance
         end
 
         %plotting
-        function plot_VoltageCharge(obj)
+        function plot_VoltageCharge(obj,savef)
             figure()
             plot(obj.Charge,obj.Voltage)
             ylabel('Voltage')
             xlabel('Charge')
             title('SuperCaps')
-            savefig([obj.OutputFolder '\\' 'SuperCapVoltageCharge.fig'])
+            if savef
+                savefig([obj.OutputFolder '\\' 'SuperCapVoltageCharge.fig'])
+            end
             saveas(gcf,[obj.OutputFolder '\\' 'SuperCapVoltageCharge.png'])
             close
         end
 
-        function plot_ChargeTime(obj)
+        function plot_ChargeTime(obj,savef)
             figure()
             plot(obj.TimeEllapsed,obj.Charge)
             xlabel('Time')
             ylabel('Charge')
             title('SuperCaps')
-            savefig([obj.OutputFolder '\\' 'SuperCapChargeTime.fig'])
+            if savef
+                savefig([obj.OutputFolder '\\' 'SuperCapChargeTime.fig'])
+            end
             saveas(gcf,[obj.OutputFolder '\\' 'SuperCapChargeTime.png'])
             close
         end
 
-        function plot_CurrentTime(obj)
+        function plot_CurrentTime(obj,savef)
             figure()
             plot(obj.TimeEllapsed,obj.Current)
             xlabel('Times (S)')
             ylabel('Current (Amps)')
             title('SuperCaps')
-            savefig([obj.OutputFolder '\\' 'SuperCapCurrentTime.fig'])
+            if savef
+                savefig([obj.OutputFolder '\\' 'SuperCapCurrentTime.fig'])
+            end
             saveas(gcf,[obj.OutputFolder '\\' 'SuperCapCurrentTime.png'])
             close
         end

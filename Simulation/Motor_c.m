@@ -169,7 +169,7 @@ classdef Motor_c < handle %goofy matlab class inheritance
         end
 
         function rad_per_s = rpm_2_rad_per_s(~,rpm)
-            rad_per_s = rpm / 60 * 2 * np.pi;
+            rad_per_s = rpm / 60 * 2 * pi;
         end
 
         function kgm2 = gcm2_2_kgm2(~,gcm2)
@@ -177,7 +177,7 @@ classdef Motor_c < handle %goofy matlab class inheritance
         end
 
         %Plotting
-        function plot_TorqueSpeedCurve(obj)
+        function plot_TorqueSpeedCurve(obj,savef)
             ms = (-36*obj.TorqueConstant/obj.WindingResistance)/(-1*obj.BackEMFConstant*obj.TorqueConstant/obj.WindingResistance);
             speed = 0:ms;
             Torque1 = -1*obj.BackEMFConstant*obj.TorqueConstant/obj.WindingResistance*speed+36*obj.TorqueConstant/obj.WindingResistance;
@@ -190,78 +190,92 @@ classdef Motor_c < handle %goofy matlab class inheritance
             xlabel('Speed (rad/s)')
             ylabel('Torque (Nm)')
             legend('Theoretical','With Losses')
-            savefig([obj.OutputFolder '\\' 'TorqueSpeedCurve.fig'])
+            if savef
+                savefig([obj.OutputFolder '\\' 'TorqueSpeedCurve.fig'])
+            end
             saveas(gcf,[obj.OutputFolder '\\' 'TorqueSpeedCurve.png'])
             close
         end
 
-        function plot_TorqueSpeed(obj)
+        function plot_TorqueSpeed(obj,savef)
             figure()
             plot( obj.Speed, obj.Torque )
             xlabel('Speed (rad/s)')
             ylabel('Torque (Nm')
             title('Motor')
-            savefig([obj.OutputFolder  '\\'  'MotorTorqueSpeed.fig'])
+            if savef
+                savefig([obj.OutputFolder  '\\'  'MotorTorqueSpeed.fig'])
+            end
             saveas(gcf,[obj.OutputFolder '\\' 'TorqueSpeedCurve.png'])
             close
         end
 
-        function plot_EfficiencySpeed(obj)
+        function plot_EfficiencySpeed(obj,savef)
             figure()
             plot( obj.Speed, obj.Efficiency )
             xlabel('Speed (rad/s)')
             ylabel('Efficiency')
             title('Motor')
-            savefig([obj.OutputFolder '\\' 'MotorEfficiencySpeed.fig'])
+            if savef
+                savefig([obj.OutputFolder '\\' 'MotorEfficiencySpeed.fig'])
+            end
             saveas(gcf,[obj.OutputFolder '\\' 'MotorEfficiencySpeed.png'])
             close
         end
 
-        function plot_PowerSpeed(obj)
+        function plot_PowerSpeed(obj,savef)
             figure()
             plot( obj.Speed, obj.PowerIn , obj.Speed , obj.PowerOut )
             xlabel('Speed (rad/s)')
             ylabel('Power (W)')
             title('Motor')
-            savefig([obj.OutputFolder '\\' 'MotorPowerSpeed.fig'])
+            if savef
+                savefig([obj.OutputFolder '\\' 'MotorPowerSpeed.fig'])
+            end
             saveas(gcf,[obj.OutputFolder '\\' 'MotorPowerSpeed.png'])
             close
         end
 
-        function plot_SpeedTime(obj)
+        function plot_SpeedTime(obj,savef)
             figure()
             plot(obj.TimeEllapsed, obj.Speed)
             xlabel('Time (s)')
             ylabel('Speed (rad/s)')
             title('Motor')
-            savefig([obj.OutputFolder '\\' 'MotorSpeedTime.fig'])
+            if savef
+               savefig([obj.OutputFolder '\\' 'MotorSpeedTime.fig'])
+            end
             saveas(gcf,[obj.OutputFolder '\\' 'MotorSpeedTime.png'])
             close
         end
 
-        function plot_TorqueTime(obj)
+        function plot_TorqueTime(obj,savef)
             figure()
             plot(obj.TimeEllapsed,obj.Torque)
             xlabel('Time (s)')
             ylabel('Torque (Nm)')
             title('Motor')
-            savefig([obj.OutputFolder '\\' 'MotorTorqueTime.fig'])
+            if savef
+                savefig([obj.OutputFolder '\\' 'MotorTorqueTime.fig'])
+            end
             saveas(gcf,[obj.OutputFolder '\\' 'MotorTorqueTime.png'])
             close
         end
 
-        function plot_CurrentTime(obj)
+        function plot_CurrentTime(obj,savef)
             figure()
             plot(obj.TimeEllapsed, obj.Current)
             xlabel('Time (s)')
             ylabel('Current (A)')
             title('Motor')
-            savefig([obj.OutputFolder '\\' 'MotorCurrentTime.fig'])  
+            if savef
+                savefig([obj.OutputFolder '\\' 'MotorCurrentTime.fig'])  
+            end
             saveas(gcf,[obj.OutputFolder '\\' 'MotorCurrentTime.png'])  
             close
         end
 
-        function plot_VoltageTime(obj)
+        function plot_VoltageTime(obj,savef)
             figure()
             plot(obj.TimeEllapsed, obj.Voltage)
             xlabel('Time (s)')
@@ -269,7 +283,9 @@ classdef Motor_c < handle %goofy matlab class inheritance
             title('Motor')
             hold on
             plot(obj.TimeEllapsed, ones(size(obj.TimeEllapsed))*obj.MaxVoltage)
-            savefig([obj.OutputFolder '\\' 'MotorVoltageTime.fig'])
+            if savef
+                savefig([obj.OutputFolder '\\' 'MotorVoltageTime.fig'])
+            end
             saveas(gcf,[obj.OutputFolder '\\' 'MotorVoltageTime.png'])
             close
         end

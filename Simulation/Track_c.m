@@ -56,13 +56,15 @@ classdef Track_c < handle %goofy matlab class inheritance
             incline = obj.Incline(distance);
         end
 
-        function plot_Profile(obj)
+        function plot_Profile(obj,savef)
             figure()
             plot(obj.Incline)
             ylabel('Slope (deg)')
             xlabel('Distance (m)')
             title('Track Profile')
-            savefig([obj.OutputFolder '\\' 'TrackProfile.fig'])
+            if savef
+                savefig([obj.OutputFolder '\\' 'TrackProfile.fig'])
+            end
             saveas(gcf,[obj.OutputFolder '\\' 'TrackProfile.png'])
             close
         end

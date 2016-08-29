@@ -131,46 +131,54 @@ classdef FuelCell_c < handle %goofy matlab class inheritance
         end
 
         %Plotting
-        function plot_FCCurve(obj)
+        function plot_FCCurve(obj,savef)
             figure()
             plot( obj.CurveI, obj.CurveV )
             xlabel('Stack Current')
             ylabel('Stack Voltage')
             title('Fuel Cell curve')
-            savefig([obj.OutputFolder '\\' 'FuelcellVoltageCurrentCurve.fig'])
+            if savef
+                savefig([obj.OutputFolder '\\' 'FuelcellVoltageCurrentCurve.fig'])
+            end
             saveas(gcf,[obj.OutputFolder '\\' 'FuelcellVoltageCurrentCurve.png'])
             close
         end
 
-        function plot_StackVoltageCurrent(obj)
+        function plot_StackVoltageCurrent(obj,savef)
             figure()
             plot( obj.StackCurrent, obj.StackVoltage )
             xlabel('Stack Current (A)')
             ylabel('Stack Voltage (V)')
             title('FuelCell')
-            savefig([obj.OutputFolder '\\' 'FuelcellVoltageCurrent.fig'])
+            if savef
+                savefig([obj.OutputFolder '\\' 'FuelcellVoltageCurrent.fig'])
+            end
             saveas(gcf,[obj.OutputFolder '\\' 'FuelcellVoltageCurrent.png'])
             close
         end
 
-        function plot_StackEfficiency(obj)
+        function plot_StackEfficiency(obj,savef)
             figure()
             plot( obj.TimeEllapsed , obj.StackEfficiency )    
             xlabel('Time (s)')
             ylabel('Stack Efficiency')
             title('FuelCell')
-            savefig([obj.OutputFolder '\\' 'FuelcellEfficiency.fig'])
+            if savef
+                savefig([obj.OutputFolder '\\' 'FuelcellEfficiency.fig'])
+            end
             saveas(gcf,[obj.OutputFolder '\\' 'FuelcellEfficiency.png'])
             close
         end
 
-        function plot_StackCurrentTime(obj)
+        function plot_StackCurrentTime(obj,savef)
             figure()
             plot(obj.TimeEllapsed,obj.StackCurrent)
             xlabel('Time')
             ylabel('Stack Current')
             title('Fuel Cell')
-            savefig([obj.OutputFolder '\\' 'FuelcellStackCurrentTime.fig'])
+            if savef
+                savefig([obj.OutputFolder '\\' 'FuelcellStackCurrentTime.fig'])
+            end
             saveas(gcf,[obj.OutputFolder '\\' 'FuelcellStackCurrentTime.png'])
             close
         end

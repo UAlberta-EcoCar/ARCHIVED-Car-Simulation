@@ -76,7 +76,7 @@ classdef Simulation_c < handle %goofy matlab class inheritance
         end
 
         %% Car Performance Plots %%
-        function plot_PowerCurves(~,fuelcell,motor,supercaps,OutputFolder)
+        function plot_PowerCurves(~,fuelcell,motor,supercaps,OutputFolder,savef)
             figure()
             plot(fuelcell.TimeEllapsed,fuelcell.StackPowerOut)
             hold on
@@ -87,7 +87,9 @@ classdef Simulation_c < handle %goofy matlab class inheritance
             ylabel('Power (W)')
             title('Power Time Series Comparison')
             legend('FuelCell','MotorIn','MotorOut','SuperCaps')            
-            savefig([OutputFolder '\\' 'PowerOutputs.fig'])
+            if savef
+                savefig([OutputFolder '\\' 'PowerOutputs.fig'])
+            end
             saveas(gcf,[OutputFolder '\\' 'PowerOutputs.png'])
             close
         end
