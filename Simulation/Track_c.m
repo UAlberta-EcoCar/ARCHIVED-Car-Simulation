@@ -23,7 +23,6 @@ classdef Track_c < handle %goofy matlab class inheritance
     methods 
         function obj = Track_c(SimulationTime,TimeInterval,TrackLength,OutputFolder)
             %classdef constructor
-            disp('Track Object Created');
 
             obj.OutputFolder = OutputFolder;
 

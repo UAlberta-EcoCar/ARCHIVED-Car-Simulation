@@ -44,8 +44,6 @@ classdef Car_c < handle %goofy matlab class inheritance
     methods
         function obj = Car_c(SimulationTime,TimeInterval,OutputFolder)
             %classfunction constructor
-            disp('Car Object Created')
-
             obj.OutputFolder = OutputFolder;
 
             obj.SimulationTime = SimulationTime;

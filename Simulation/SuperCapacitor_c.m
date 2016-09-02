@@ -22,7 +22,6 @@ classdef SuperCapacitor_c < handle %goofy matlab class inheritance
     methods
         function obj = SuperCapacitor_c(SimulationTime,TimeInterval,OutputFolder)
             %class constructor
-            disp('Super Capacitor Object Created')
 
             obj.OutputFolder = OutputFolder;
 

@@ -7,8 +7,8 @@ if ~exist(Folder,'dir')
 end
 %% Simulation Details %%
 savef = 0; %change to 1 to save .fig as well as .png
-SimulationTime = 120; %seconds
-TimeInterval = 0.005; %time step/integration interval %make a lot smaller than total inertia to decrease motor speed integration error
+SimulationTime = 80; %seconds
+TimeInterval = 0.01; %time step/integration interval %make a lot smaller than total inertia to decrease motor speed integration error
 TrackLength = 4500; % meters
 DataPoints = floor(SimulationTime/TimeInterval);
 
@@ -18,24 +18,20 @@ NumberFuelCells = 1;
 ef = ExcelReader_c();
 ef.ParseMotorFile('Motor List.xlsx');
 
-GearRatios = [ 5 10 15 20 ];
+GearRatios = [ 4 6 8 9 10 11 12 14 16 18 20 22 24 26 ];
 
 %% Nested For Loops %%
 for m = 1:(ef.NumberMotors)
     Folder2 = [ Folder '\\' ef.motor(m).name ];
-    if ~exist(Folder2,'dir')
-        mkdir(Folder2)
-    end
+
     for f = 2:(NumberFuelCells+1)
         Folder3 = [ Folder2 '\\' 'FC1' ]; 
-        if ~exist(Folder3,'dir')
-            mkdir(Folder3)
-        end
+        
         for GearRatio = GearRatios
             OutputFolder = [ Folder3 '\\' 'GearRatio' int2str(GearRatio) ];
-            if ~exist(OutputFolder,'dir')
-                mkdir(OutputFolder)
-            end
+            
+            disp('')
+            disp([ef.motor(m).name ' ' 'FC1' ' ' int2str(GearRatio) ]) 
             
             %% %% MOTOR %% %%
             %create motor object
@@ -51,9 +47,8 @@ for m = 1:(ef.NumberMotors)
             motor.MaxCurrent = 60; %Amp
             %calculate other motor parameters
             motor.calc_MissingMotorConstants();
-            motor.plot_TorqueSpeedCurve(savef);
 
-
+            
             %% FUELCELL %%
 
             %create fuelcell object
@@ -68,8 +63,6 @@ for m = 1:(ef.NumberMotors)
             fuelcell.DiodeVoltageDrop = 0.5;
             fuelcell.AuxCurrent = 2; %current consumed by controllers, fans etc (everything except motor)
             fuelcell.build_VoltageCurrentCurve();
-            fuelcell.plot_FCCurve(savef);
-
 
             %% TRACK %%
 
@@ -77,7 +70,6 @@ for m = 1:(ef.NumberMotors)
             track = Track_c(SimulationTime,TimeInterval,TrackLength,OutputFolder);
             %set track parameters
             track.smoothtrack(5);
-            track.plot_Profile(savef);
             track.RelativeHumidity = 50; %%
             track.Temperature = 30; %Celcius
             track.AirPressure = 101; %kPa
@@ -119,35 +111,51 @@ for m = 1:(ef.NumberMotors)
             %make new instance of Simulation class
             Simulation = Simulation_c();
             Simulation.run_Simulation(motor,fuelcell,car,track,supercaps,DataPoints,TimeInterval);
+            
+            if Simulation.check_Viability(fuelcell,motor,supercaps,car,TimeInterval)
+                disp('Car runs successfully')
+                if ~exist(Folder2,'dir')
+                    mkdir(Folder2)
+                end
+                if ~exist(Folder3,'dir')
+                    mkdir(Folder3)
+                end
+                if ~exist(OutputFolder,'dir')
+                    mkdir(OutputFolder)
+                end
 
+                %% Make Plots %%
+                track.plot_Profile(savef);
+                
+                motor.plot_TorqueSpeedCurve(savef);
+                motor.plot_TorqueSpeed(savef)
+                motor.plot_PowerSpeed(savef)
+                motor.plot_EfficiencySpeed(savef)
+                motor.plot_SpeedTime(savef)
+                motor.plot_TorqueTime(savef)
+                motor.plot_CurrentTime(savef)
+                motor.plot_VoltageTime(savef)
 
-            %% Make Plots %%
-            motor.plot_TorqueSpeed(savef)
-            motor.plot_PowerSpeed(savef)
-            motor.plot_EfficiencySpeed(savef)
-            motor.plot_SpeedTime(savef)
-            motor.plot_TorqueTime(savef)
-            motor.plot_CurrentTime(savef)
-            motor.plot_VoltageTime(savef)
+                fuelcell.plot_FCCurve(savef);
+                fuelcell.plot_StackVoltageCurrent(savef)
+                fuelcell.plot_StackEfficiency(savef)
+                fuelcell.plot_StackCurrentTime(savef)
 
-            fuelcell.plot_StackVoltageCurrent(savef)
-            fuelcell.plot_StackEfficiency(savef)
-            fuelcell.plot_StackCurrentTime(savef)
+                car.plot_DistanceTime(savef)
+                car.plot_SpeedTime(savef)
+                car.plot_AccelerationTime(savef)
+                car.plot_Milage(savef)
+                car.plot_Drag(savef)
 
-            car.plot_DistanceTime(savef)
-            car.plot_SpeedTime(savef)
-            car.plot_AccelerationTime(savef)
-            car.plot_Milage(savef)
-            car.plot_Drag(savef)
+                supercaps.plot_VoltageCharge(savef)
+                supercaps.plot_ChargeTime(savef)
+                supercaps.plot_CurrentTime(savef)
 
-            supercaps.plot_VoltageCharge(savef)
-            supercaps.plot_ChargeTime(savef)
-            supercaps.plot_CurrentTime(savef)
+                Simulation.plot_PowerCurves(fuelcell,motor,supercaps,OutputFolder,savef)
 
-            Simulation.plot_PowerCurves(fuelcell,motor,supercaps,OutputFolder,savef)
-
-            %Save data to .mat
-            save([OutputFolder '\\' 'Motor1' '_' 'FC1' '_' 'GearRatio' int2str(GearRatio) ])
+                %Save data to .mat
+                save([OutputFolder '\\' 'Motor1' '_' 'FC1' '_' 'GearRatio' int2str(GearRatio) ])
+            end
         end
     end
 end

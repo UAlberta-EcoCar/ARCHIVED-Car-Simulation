@@ -51,8 +51,7 @@ classdef Motor_c < handle %goofy matlab class inheritance
     methods
         function obj = Motor_c(SimulationTime,TimeInterval,OutputFolder)
             %class constructor
-            disp('Motor Object Created')
-
+            
             obj.OutputFolder = OutputFolder;
 
             obj.SimulationTime = SimulationTime;

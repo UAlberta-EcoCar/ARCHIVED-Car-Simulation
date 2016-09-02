@@ -40,8 +40,6 @@ classdef FuelCell_c < handle %goofy matlab class inheritance
     methods
         function obj = FuelCell_c(SimulationTime,TimeInterval,OutputFolder)
             %class constructor
-            disp('FuelCell Object Created')
-
             obj.OutputFolder = OutputFolder;        
 
             obj.SimulationTime = SimulationTime;

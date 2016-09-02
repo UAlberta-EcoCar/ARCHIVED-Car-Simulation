@@ -1,9 +1,13 @@
 classdef Simulation_c < handle %goofy matlab class inheritance
     %%%% SIMULATION %%%%
+    properties
+        SpeedThres = 25;
+        AccelerationTime = 30;
+    end
+    
     methods
         function obj = Simulation_c()
             %empty class constructor
-            disp('Simulation Object Created')
         end
         function run_Simulation(~,motor,fuelcell,car,track,supercap,DataPoints,TimeInterval)
             %Starting Simulation
@@ -75,6 +79,34 @@ classdef Simulation_c < handle %goofy matlab class inheritance
             car.AverageMilage = car.DistanceTravelled / 1000 ./ (fuelcell.StackEnergyConsumed / 1000 / 1000 / 3.6); %km / kWh
         end
 
+        %% Check whether gear / fc / motor combination is viable
+        function result = check_Viability(obj,fuelcell,motor,supercaps,car,TimeInterval)
+            result = 0;
+            if max(car.Speed) < (obj.SpeedThres/3.6)
+                disp('Car too slow')
+                result = result + 1;
+            end
+            if max(motor.Voltage) > motor.MaxVoltage
+                disp('Motor will melt')
+                result = result + 1;
+            end
+            if ((find(car.Speed > (20/3.6),1)*TimeInterval) > obj.AccelerationTime)
+                disp('Acceleration to low')
+                result = result + 1;
+            end
+            if isempty(find(car.Speed > (20/3.6),1))
+                disp('Acceleration to low')
+                result = result + 1;
+            end
+            
+            %return 1 for success 0 for failiure
+            if result
+                result = 0;
+            else
+                result = 1;
+            end
+        end
+        
         %% Car Performance Plots %%
         function plot_PowerCurves(~,fuelcell,motor,supercaps,OutputFolder,savef)
             figure()
