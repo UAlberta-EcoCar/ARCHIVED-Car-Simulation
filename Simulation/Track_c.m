@@ -62,9 +62,9 @@ classdef Track_c < handle %goofy matlab class inheritance
             xlabel('Distance (m)')
             title('Track Profile')
             if savef
-                savefig([obj.OutputFolder '\\' 'TrackProfile.fig'])
+                savefig([obj.OutputFolder Delimiter() 'TrackProfile.fig'])
             end
-            saveas(gcf,[obj.OutputFolder '\\' 'TrackProfile.png'])
+            saveas(gcf,[obj.OutputFolder Delimiter() 'TrackProfile.png'])
             close
         end
     end

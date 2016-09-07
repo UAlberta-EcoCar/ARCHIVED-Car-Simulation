@@ -190,9 +190,9 @@ classdef Motor_c < handle %goofy matlab class inheritance
             ylabel('Torque (Nm)')
             legend('Theoretical','With Losses')
             if savef
-                savefig([obj.OutputFolder '\\' 'TorqueSpeedCurve.fig'])
+                savefig([obj.OutputFolder Delimiter() 'TorqueSpeedCurve.fig'])
             end
-            saveas(gcf,[obj.OutputFolder '\\' 'TorqueSpeedCurve.png'])
+            saveas(gcf,[obj.OutputFolder Delimiter() 'TorqueSpeedCurve.png'])
             close
         end
 
@@ -203,9 +203,9 @@ classdef Motor_c < handle %goofy matlab class inheritance
             ylabel('Torque (Nm')
             title('Motor')
             if savef
-                savefig([obj.OutputFolder  '\\'  'MotorTorqueSpeed.fig'])
+                savefig([obj.OutputFolder  Delimiter()  'MotorTorqueSpeed.fig'])
             end
-            saveas(gcf,[obj.OutputFolder '\\' 'TorqueSpeedCurve.png'])
+            saveas(gcf,[obj.OutputFolder Delimiter() 'TorqueSpeedCurve.png'])
             close
         end
 
@@ -216,9 +216,9 @@ classdef Motor_c < handle %goofy matlab class inheritance
             ylabel('Efficiency')
             title('Motor')
             if savef
-                savefig([obj.OutputFolder '\\' 'MotorEfficiencySpeed.fig'])
+                savefig([obj.OutputFolder Delimiter() 'MotorEfficiencySpeed.fig'])
             end
-            saveas(gcf,[obj.OutputFolder '\\' 'MotorEfficiencySpeed.png'])
+            saveas(gcf,[obj.OutputFolder Delimiter() 'MotorEfficiencySpeed.png'])
             close
         end
 
@@ -229,9 +229,9 @@ classdef Motor_c < handle %goofy matlab class inheritance
             ylabel('Power (W)')
             title('Motor')
             if savef
-                savefig([obj.OutputFolder '\\' 'MotorPowerSpeed.fig'])
+                savefig([obj.OutputFolder Delimiter() 'MotorPowerSpeed.fig'])
             end
-            saveas(gcf,[obj.OutputFolder '\\' 'MotorPowerSpeed.png'])
+            saveas(gcf,[obj.OutputFolder Delimiter() 'MotorPowerSpeed.png'])
             close
         end
 
@@ -242,9 +242,9 @@ classdef Motor_c < handle %goofy matlab class inheritance
             ylabel('Speed (rad/s)')
             title('Motor')
             if savef
-               savefig([obj.OutputFolder '\\' 'MotorSpeedTime.fig'])
+               savefig([obj.OutputFolder Delimiter() 'MotorSpeedTime.fig'])
             end
-            saveas(gcf,[obj.OutputFolder '\\' 'MotorSpeedTime.png'])
+            saveas(gcf,[obj.OutputFolder Delimiter() 'MotorSpeedTime.png'])
             close
         end
 
@@ -255,9 +255,9 @@ classdef Motor_c < handle %goofy matlab class inheritance
             ylabel('Torque (Nm)')
             title('Motor')
             if savef
-                savefig([obj.OutputFolder '\\' 'MotorTorqueTime.fig'])
+                savefig([obj.OutputFolder Delimiter() 'MotorTorqueTime.fig'])
             end
-            saveas(gcf,[obj.OutputFolder '\\' 'MotorTorqueTime.png'])
+            saveas(gcf,[obj.OutputFolder Delimiter() 'MotorTorqueTime.png'])
             close
         end
 
@@ -268,9 +268,9 @@ classdef Motor_c < handle %goofy matlab class inheritance
             ylabel('Current (A)')
             title('Motor')
             if savef
-                savefig([obj.OutputFolder '\\' 'MotorCurrentTime.fig'])  
+                savefig([obj.OutputFolder Delimiter() 'MotorCurrentTime.fig'])  
             end
-            saveas(gcf,[obj.OutputFolder '\\' 'MotorCurrentTime.png'])  
+            saveas(gcf,[obj.OutputFolder Delimiter() 'MotorCurrentTime.png'])  
             close
         end
 
@@ -283,9 +283,9 @@ classdef Motor_c < handle %goofy matlab class inheritance
             hold on
             plot(obj.TimeEllapsed, ones(size(obj.TimeEllapsed))*obj.MaxVoltage)
             if savef
-                savefig([obj.OutputFolder '\\' 'MotorVoltageTime.fig'])
+                savefig([obj.OutputFolder Delimiter() 'MotorVoltageTime.fig'])
             end
-            saveas(gcf,[obj.OutputFolder '\\' 'MotorVoltageTime.png'])
+            saveas(gcf,[obj.OutputFolder Delimiter() 'MotorVoltageTime.png'])
             close
         end
     end

@@ -13,25 +13,23 @@ TrackLength = 4500; % meters
 DataPoints = floor(SimulationTime/TimeInterval);
 
 %% Excel Files Information %%
-NumberFuelCells = 1;
-
 ef = ExcelReader_c();
 ef.ParseMotorFile('Motor List.xlsx');
-
-GearRatios = [ 4 6 8 9 10 11 12 14 16 18 20 22 24 26 ];
+ef.ParseFCFile('FC List.xlsx');
+GearRatios = [ 6 8 9 10 11 12 14 16 18 20 22 ];
 
 %% Nested For Loops %%
 for m = 1:(ef.NumberMotors)
-    Folder2 = [ Folder '\\' ef.motor(m).name ];
+    Folder2 = [ Folder Delimiter() ef.motor(m).name ];
 
-    for f = 2:(NumberFuelCells+1)
-        Folder3 = [ Folder2 '\\' 'FC1' ]; 
+    for f = 1:(ef.NumberFCs)
+        Folder3 = [ Folder2 Delimiter() ef.fc(f).name ]; 
         
         for GearRatio = GearRatios
-            OutputFolder = [ Folder3 '\\' 'GearRatio' int2str(GearRatio) ];
+            OutputFolder = [ Folder3 Delimiter() 'GearRatio' int2str(GearRatio) ];
             
             disp('')
-            disp([ef.motor(m).name ' ' 'FC1' ' ' int2str(GearRatio) ]) 
+            disp([ef.motor(m).name ' ' ef.fc(f).name ' ' int2str(GearRatio) ]) 
             
             %% %% MOTOR %% %%
             %create motor object
@@ -54,12 +52,12 @@ for m = 1:(ef.NumberMotors)
             %create fuelcell object
             fuelcell = FuelCell_c(SimulationTime,TimeInterval,OutputFolder);
             %Set FuelCell parameters
-            fuelcell.CellNumber = 23;
-            fuelcell.CellArea = 145; %cm2
-            fuelcell.CellResistance = 0.36;
-            fuelcell.Alpha = 0.45;
-            fuelcell.ExchangeCurrentDensity = 0.04;
-            fuelcell.CellOCVoltage = 1.02; %open circuit voltage
+            fuelcell.CellNumber = ef.fc(f).CellNumber;
+            fuelcell.CellArea = ef.fc(f).CellArea; %cm2
+            fuelcell.CellResistance = ef.fc(f).CellResistance;
+            fuelcell.Alpha = ef.fc(f).Alpha;
+            fuelcell.ExchangeCurrentDensity = ef.fc(f).ExchangeCurrentDensity;
+            fuelcell.CellOCVoltage = ef.fc(f).CellOCVoltage; %open circuit voltage
             fuelcell.DiodeVoltageDrop = 0.5;
             fuelcell.AuxCurrent = 2; %current consumed by controllers, fans etc (everything except motor)
             fuelcell.build_VoltageCurrentCurve();
@@ -69,7 +67,10 @@ for m = 1:(ef.NumberMotors)
             %create track object
             track = Track_c(SimulationTime,TimeInterval,TrackLength,OutputFolder);
             %set track parameters
-            track.smoothtrack(5);
+            distance = [ 0	16.0934	32.1868	48.2802	64.3736	80.467	96.5604	112.6538	128.7472	144.8406	160.934	177.0274	193.1208	209.2142	225.3076	241.401	257.4944	273.5878	289.6812	292.89988	296.11856	299.33724	302.55592	305.7746	313.8213	321.868	337.9614	354.0548	370.1482	386.2416	402.335	418.4284	434.5218	450.6152	466.7086	482.802	498.8954	514.9888	531.0822	547.1756	563.269	579.3624	595.4558	611.5492	627.6426	643.736	659.8294	675.9228	692.0162	708.1096	724.203	740.2964	756.3898	772.4832	788.5766	804.67	820.7634	836.8568	852.9502	869.0436	877.0903	885.137	893.1837	901.2304	909.2771	917.3238	925.3705	933.4172	941.4639	949.5106 ];
+            incline = [ 0.5	0.4	0.7	0.5	0.7	0.9	0.7	0.6	0.6	0.8	0.3	-0.7	-1.1	-0.4	0.3	0.1	-0.8	-0.6	-0.5	-0.5	-1.4	-2.4	-3.3	-2.3	-1.5	-1.8	-1.7	-1.6	-0.9	-0.6	-0.9	-1.2	-1.9	-0.9	0.2	-0.5	-0.5	-0.5	-0.5	0.2	1	1.1	1	0.9	0.3	-1	0.2	0	-0.1	-0.2	-0.2	0	0.2	-0.8	-0.5	0	-0.5	-0.8	-0.6	-1.7	-1.5	3.2	1	5.5	4.2	3.9	4.2	4.2	3.2	1.2 ];
+            track.TrackLength = ceil(max(distance));
+            track.Incline = pchip(distance,incline,1:track.TrackLength)';
             track.RelativeHumidity = 50; %%
             track.Temperature = 30; %Celcius
             track.AirPressure = 101; %kPa
@@ -154,7 +155,7 @@ for m = 1:(ef.NumberMotors)
                 Simulation.plot_PowerCurves(fuelcell,motor,supercaps,OutputFolder,savef)
 
                 %Save data to .mat
-                save([OutputFolder '\\' 'Motor1' '_' 'FC1' '_' 'GearRatio' int2str(GearRatio) ])
+                save([OutputFolder Delimiter() 'Motor1' '_' 'FC1' '_' 'GearRatio' int2str(GearRatio) ])
             end
         end
     end

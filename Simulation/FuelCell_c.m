@@ -136,9 +136,9 @@ classdef FuelCell_c < handle %goofy matlab class inheritance
             ylabel('Stack Voltage')
             title('Fuel Cell curve')
             if savef
-                savefig([obj.OutputFolder '\\' 'FuelcellVoltageCurrentCurve.fig'])
+                savefig([obj.OutputFolder Delimiter() 'FuelcellVoltageCurrentCurve.fig'])
             end
-            saveas(gcf,[obj.OutputFolder '\\' 'FuelcellVoltageCurrentCurve.png'])
+            saveas(gcf,[obj.OutputFolder Delimiter() 'FuelcellVoltageCurrentCurve.png'])
             close
         end
 
@@ -149,9 +149,9 @@ classdef FuelCell_c < handle %goofy matlab class inheritance
             ylabel('Stack Voltage (V)')
             title('FuelCell')
             if savef
-                savefig([obj.OutputFolder '\\' 'FuelcellVoltageCurrent.fig'])
+                savefig([obj.OutputFolder Delimiter() 'FuelcellVoltageCurrent.fig'])
             end
-            saveas(gcf,[obj.OutputFolder '\\' 'FuelcellVoltageCurrent.png'])
+            saveas(gcf,[obj.OutputFolder Delimiter() 'FuelcellVoltageCurrent.png'])
             close
         end
 
@@ -162,9 +162,9 @@ classdef FuelCell_c < handle %goofy matlab class inheritance
             ylabel('Stack Efficiency')
             title('FuelCell')
             if savef
-                savefig([obj.OutputFolder '\\' 'FuelcellEfficiency.fig'])
+                savefig([obj.OutputFolder Delimiter() 'FuelcellEfficiency.fig'])
             end
-            saveas(gcf,[obj.OutputFolder '\\' 'FuelcellEfficiency.png'])
+            saveas(gcf,[obj.OutputFolder Delimiter() 'FuelcellEfficiency.png'])
             close
         end
 
@@ -175,9 +175,9 @@ classdef FuelCell_c < handle %goofy matlab class inheritance
             ylabel('Stack Current')
             title('Fuel Cell')
             if savef
-                savefig([obj.OutputFolder '\\' 'FuelcellStackCurrentTime.fig'])
+                savefig([obj.OutputFolder Delimiter() 'FuelcellStackCurrentTime.fig'])
             end
-            saveas(gcf,[obj.OutputFolder '\\' 'FuelcellStackCurrentTime.png'])
+            saveas(gcf,[obj.OutputFolder Delimiter() 'FuelcellStackCurrentTime.png'])
             close
         end
     end

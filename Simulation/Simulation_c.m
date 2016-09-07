@@ -1,8 +1,8 @@
 classdef Simulation_c < handle %goofy matlab class inheritance
     %%%% SIMULATION %%%%
     properties
-        SpeedThres = 25;
-        AccelerationTime = 30;
+        LowSpeedThres = 25;
+        ZeroTo20Time = 30;
     end
     
     methods
@@ -82,15 +82,19 @@ classdef Simulation_c < handle %goofy matlab class inheritance
         %% Check whether gear / fc / motor combination is viable
         function result = check_Viability(obj,fuelcell,motor,supercaps,car,TimeInterval)
             result = 0;
-            if max(car.Speed) < (obj.SpeedThres/3.6)
+            if max(car.Speed) < (obj.LowSpeedThres/3.6)
                 disp('Car too slow')
                 result = result + 1;
+            end
+            if max(car.Speed) > (45/3.6)
+                disp('Car too fast')
+                result = result+1;
             end
             if max(motor.Voltage) > motor.MaxVoltage
                 disp('Motor will melt')
                 result = result + 1;
             end
-            if ((find(car.Speed > (20/3.6),1)*TimeInterval) > obj.AccelerationTime)
+            if ((find(car.Speed > (20/3.6),1)*TimeInterval) > obj.ZeroTo20Time)
                 disp('Acceleration to low')
                 result = result + 1;
             end
@@ -120,9 +124,9 @@ classdef Simulation_c < handle %goofy matlab class inheritance
             title('Power Time Series Comparison')
             legend('FuelCell','MotorIn','MotorOut','SuperCaps')            
             if savef
-                savefig([OutputFolder '\\' 'PowerOutputs.fig'])
+                savefig([OutputFolder Delimiter() 'PowerOutputs.fig'])
             end
-            saveas(gcf,[OutputFolder '\\' 'PowerOutputs.png'])
+            saveas(gcf,[OutputFolder Delimiter() 'PowerOutputs.png'])
             close
         end
     end

@@ -66,9 +66,9 @@ classdef SuperCapacitor_c < handle %goofy matlab class inheritance
             xlabel('Charge')
             title('SuperCaps')
             if savef
-                savefig([obj.OutputFolder '\\' 'SuperCapVoltageCharge.fig'])
+                savefig([obj.OutputFolder Delimiter() 'SuperCapVoltageCharge.fig'])
             end
-            saveas(gcf,[obj.OutputFolder '\\' 'SuperCapVoltageCharge.png'])
+            saveas(gcf,[obj.OutputFolder Delimiter() 'SuperCapVoltageCharge.png'])
             close
         end
 
@@ -79,9 +79,9 @@ classdef SuperCapacitor_c < handle %goofy matlab class inheritance
             ylabel('Charge')
             title('SuperCaps')
             if savef
-                savefig([obj.OutputFolder '\\' 'SuperCapChargeTime.fig'])
+                savefig([obj.OutputFolder Delimiter() 'SuperCapChargeTime.fig'])
             end
-            saveas(gcf,[obj.OutputFolder '\\' 'SuperCapChargeTime.png'])
+            saveas(gcf,[obj.OutputFolder Delimiter() 'SuperCapChargeTime.png'])
             close
         end
 
@@ -92,9 +92,9 @@ classdef SuperCapacitor_c < handle %goofy matlab class inheritance
             ylabel('Current (Amps)')
             title('SuperCaps')
             if savef
-                savefig([obj.OutputFolder '\\' 'SuperCapCurrentTime.fig'])
+                savefig([obj.OutputFolder Delimiter() 'SuperCapCurrentTime.fig'])
             end
-            saveas(gcf,[obj.OutputFolder '\\' 'SuperCapCurrentTime.png'])
+            saveas(gcf,[obj.OutputFolder Delimiter() 'SuperCapCurrentTime.png'])
             close
         end
     end

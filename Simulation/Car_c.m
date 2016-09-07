@@ -83,9 +83,9 @@ classdef Car_c < handle %goofy matlab class inheritance
             ylabel('Distance (m)')
             title('Car')            
             if savef
-                savefig([obj.OutputFolder '\\' 'CarDistanceTime.fig'])
+                savefig([obj.OutputFolder Delimiter() 'CarDistanceTime.fig'])
             end
-            saveas(gcf,[obj.OutputFolder '\\' 'CarDistanceTime.png'])
+            saveas(gcf,[obj.OutputFolder Delimiter() 'CarDistanceTime.png'])
             close
         end
 
@@ -96,9 +96,9 @@ classdef Car_c < handle %goofy matlab class inheritance
             ylabel('Speed (km.h)')
             title('Car')
             if savef
-                savefig([obj.OutputFolder '\\' 'CarSpeedTime.fig'])
+                savefig([obj.OutputFolder Delimiter() 'CarSpeedTime.fig'])
             end
-            saveas(gcf,[obj.OutputFolder '\\' 'CarSpeedTime.png'])
+            saveas(gcf,[obj.OutputFolder Delimiter() 'CarSpeedTime.png'])
             close
         end
 
@@ -109,9 +109,9 @@ classdef Car_c < handle %goofy matlab class inheritance
             ylabel('Acceleration (m/s2)')
             title('Car')
             if savef
-                savefig([obj.OutputFolder '\\' 'CarAccelerationTime.fig'])
+                savefig([obj.OutputFolder Delimiter() 'CarAccelerationTime.fig'])
             end
-            saveas(gcf,[obj.OutputFolder '\\' 'CarAccelerationTime.png'])
+            saveas(gcf,[obj.OutputFolder Delimiter() 'CarAccelerationTime.png'])
             close
         end
 
@@ -125,9 +125,9 @@ classdef Car_c < handle %goofy matlab class inheritance
             plot(obj.TimeEllapsed, obj.AverageMilage)
             legend('InstantaneousMilage','Average Milage')
             if savef
-                savefig([obj.OutputFolder '\\' 'CarMilage.fig'])
+                savefig([obj.OutputFolder Delimiter() 'CarMilage.fig'])
             end
-            saveas(gcf,[obj.OutputFolder '\\' 'CarMilage.png'])
+            saveas(gcf,[obj.OutputFolder Delimiter() 'CarMilage.png'])
             close
         end
 
@@ -142,9 +142,9 @@ classdef Car_c < handle %goofy matlab class inheritance
             title('Drag Forces')
             legend('AirDrag','BearingDrag','TireDrag')
             if savef
-                savefig([obj.OutputFolder '\\' 'CarDrag.fig'])
+                savefig([obj.OutputFolder Delimiter() 'CarDrag.fig'])
             end
-            saveas(gcf,[obj.OutputFolder '\\' 'CarDrag.png'])
+            saveas(gcf,[obj.OutputFolder Delimiter() 'CarDrag.png'])
             close
         end
     end
