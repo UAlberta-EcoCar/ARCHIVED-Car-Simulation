@@ -2,7 +2,7 @@ classdef Simulation_c < handle %goofy matlab class inheritance
     %%%% SIMULATION %%%%
     properties
         LowSpeedThres = 25;
-        ZeroTo20Time = 30;
+        ZeroTo20Time = 25;
     end
     
     methods
@@ -86,11 +86,7 @@ classdef Simulation_c < handle %goofy matlab class inheritance
                 disp('Car too slow')
                 result = result + 1;
             end
-            if max(car.Speed) > (45/3.6)
-                disp('Car too fast')
-                result = result+1;
-            end
-            if max(motor.Voltage) > motor.MaxVoltage
+            if max(motor.Voltage) > (motor.MaxVoltage+3) %arbitrary 3 b/c 12V motors run off 12V batteries which reach 15V
                 disp('Motor will melt')
                 result = result + 1;
             end

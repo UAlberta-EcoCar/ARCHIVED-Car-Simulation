@@ -144,7 +144,7 @@ classdef Motor_c < handle %goofy matlab class inheritance
                 end
                 if Current < 0
                     Current = 0;
-                    Torque = 0;
+                    Torque = -obj.TorqueLoss;
                 end
             else
                 Torque = 0;
@@ -160,6 +160,7 @@ classdef Motor_c < handle %goofy matlab class inheritance
             obj.PowerOut = obj.Torque .* obj.Speed;
             % power out / power in
             obj.Efficiency = obj.PowerOut ./ obj.PowerIn;
+            obj.Efficiency(obj.PowerIn == 0) = 0;
         end
 
         %Unit Conversions
@@ -177,15 +178,15 @@ classdef Motor_c < handle %goofy matlab class inheritance
 
         %Plotting
         function plot_TorqueSpeedCurve(obj,savef)
-            ms = (-36*obj.TorqueConstant/obj.WindingResistance)/(-1*obj.BackEMFConstant*obj.TorqueConstant/obj.WindingResistance);
+            ms = (-24*obj.TorqueConstant/obj.WindingResistance)/(-1*obj.BackEMFConstant*obj.TorqueConstant/obj.WindingResistance);
             speed = 0:ms;
-            Torque1 = -1*obj.BackEMFConstant*obj.TorqueConstant/obj.WindingResistance*speed+36*obj.TorqueConstant/obj.WindingResistance;
-            Torque2 = -1*obj.BackEMFConstant*obj.TorqueConstant/obj.WindingResistance*speed+36*obj.TorqueConstant/obj.WindingResistance-obj.TorqueLoss;
+            Torque1 = -1*obj.BackEMFConstant*obj.TorqueConstant/obj.WindingResistance*speed+24*obj.TorqueConstant/obj.WindingResistance;
+            Torque2 = -1*obj.BackEMFConstant*obj.TorqueConstant/obj.WindingResistance*speed+24*obj.TorqueConstant/obj.WindingResistance-obj.TorqueLoss;
             figure()
             plot(speed,Torque1)
             hold on
             plot(speed,Torque2)
-            title('Motor Curve at 36 V')
+            title('Motor Curve at 24 V')
             xlabel('Speed (rad/s)')
             ylabel('Torque (Nm)')
             legend('Theoretical','With Losses')
