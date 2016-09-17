@@ -7,8 +7,8 @@ if ~exist(Folder,'dir')
 end
 %% Simulation Details %%
 savef = 0; %change to 1 to save .fig as well as .png
-SimulationTime = 120; %seconds
-TimeInterval = 0.05; %time step/integration interval %make a lot smaller than total inertia to decrease motor speed integration error
+SimulationTime = 60; %seconds
+TimeInterval = 0.01; %time step/integration interval %make a lot smaller than total inertia to decrease motor speed integration error
 
 DataPoints = floor(SimulationTime/TimeInterval);
 
@@ -16,7 +16,10 @@ DataPoints = floor(SimulationTime/TimeInterval);
 ef = ExcelReader_c();
 ef.ParseMotorFile('Motor List.xlsx');
 ef.ParseFCFile('FC List.xlsx');
-GearRatios = [ 6 8 9 10 11 12 14 16 18 20 22 ];
+GearRatios = [ 10 12 14 15 16 17 18 19 20 22 ];
+
+%% Excel file output %%
+efo = ExcelWriter([ Folder Delimiter() 'Summary Report']);
 
 %% Nested For Loops %%
 for m = 1:(ef.NumberMotors)
@@ -45,10 +48,12 @@ for m = 1:(ef.NumberMotors)
             motor.MaxCurrent = 60; %Amp
             %calculate other motor parameters
             motor.calc_MissingMotorConstants();
-
+            
+            %% BuckConvert / Motor Controller %%
+            buckconverter = BuckConverter_c(SimulationTime,TimeInterval,OutputFolder);
+            buckconverter.Efficiency = 0.9;
             
             %% FUELCELL %%
-
             %create fuelcell object
             fuelcell = FuelCell_c(SimulationTime,TimeInterval,OutputFolder);
             %Set FuelCell parameters
@@ -63,7 +68,6 @@ for m = 1:(ef.NumberMotors)
             fuelcell.build_VoltageCurrentCurve();
 
             %% TRACK %%
-
             %create track object
             TrackLength = 950;
             track = Track_c(SimulationTime,TimeInterval,TrackLength,OutputFolder);
@@ -81,11 +85,10 @@ for m = 1:(ef.NumberMotors)
 
 
             %% SUPERCAPS %%
-
             %create super capacitor object
             supercaps = SuperCapacitor_c(SimulationTime,TimeInterval,OutputFolder);
             %set super capacitor parameters
-            supercaps.Capacitance = 19.3;
+            supercaps.Capacitance = 19.3*4;
 
 
             %% CAR %%
@@ -96,25 +99,25 @@ for m = 1:(ef.NumberMotors)
             % NumberOfTeethDriven / NumberOfTeethDriving
             car.GearRatio = GearRatio; %unitless
             % efficency of gears (based off friction etc)
-            car.GearEfficiency = 0.9; % spur gears usually over 90%
+            car.GearEfficiency = 0.8; % spur gears usually over 90%
             % total mass of everything
-            car.Mass = 40+75; %kg 
-            car.WheelDiameter = 0.56; % m
+            car.Mass = 115; %kg 
+            car.WheelDiameter = 0.478; % m
             % Bearing resistance friction coefficient
             car.BearingDragCoefficient = 0.0015; %unitless Standard value for oiled bearings
             %diameter of bearings
-            car.BearingBoreDiameter = 0.05; %m's
+            car.BearingBoreDiameter = 0.03; %m's
             car.BearingDrag = car.calc_BearingDrag(car.BearingDragCoefficient,car.Mass,car.BearingBoreDiameter,car.WheelDiameter);
             %https://en.wikipedia.org/wiki/Rolling_resistance
-            car.RollingResistanceCoefficient = 0.007; %Unitless get from Michelin (lowest from michelin is 0.0065)
+            car.RollingResistanceCoefficient = 0.002; %Unitless get from tire manufacturer
             car.TireDrag = car.calc_TireDrag(car.RollingResistanceCoefficient,car.Mass);
             % http://physics.info/drag/
-            car.AreodynamicDragCoefficient = 0.15; % standard value for a car
-            car.FrontalArea = 0.5*0.5;% 1.2*1.67; %m^2
+            car.AreodynamicDragCoefficient = 0.16; % standard value for a car
+            car.FrontalArea = 0.45; %m^2
 
             %make new instance of Simulation class
             Simulation = Simulation_c();
-            Simulation.run_Simulation(motor,fuelcell,car,track,supercaps,DataPoints,TimeInterval);
+            Simulation.run_Simulation(motor,buckconverter,fuelcell,car,track,supercaps,DataPoints,TimeInterval);
             
             if Simulation.check_Viability(fuelcell,motor,supercaps,car,TimeInterval)
                 disp('Car runs successfully')
@@ -159,7 +162,12 @@ for m = 1:(ef.NumberMotors)
 
                 %Save data to .mat
                 save([OutputFolder Delimiter() 'Motor1' '_' 'FC1' '_' 'GearRatio' int2str(GearRatio) ])
+                
+                %Write data to excel file
+                efo.WriteLine({ef.motor(m).name,ef.fc(f).name,num2str(GearRatio),max(car.Speed)*3.6,mean(car.Speed)*3.6,find(car.Speed>(25/3.6),1)*TimeInterval,max(car.InstantaneousMilage),max(car.AverageMilage),max(car.DistanceTravelled)});
             end
         end
     end
 end
+
+efo.SaveToFile();

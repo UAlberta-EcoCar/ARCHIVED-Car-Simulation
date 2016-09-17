@@ -129,26 +129,21 @@ classdef Motor_c < handle %goofy matlab class inheritance
             end
         end
 
-        function [Torque, Current] = calc_MotorTorqueCurrent(obj,Voltage,Speed,Throttle)
-            if Throttle
-                %motor Torque Speed Curve
-                Torque = -1*obj.BackEMFConstant*obj.TorqueConstant/obj.WindingResistance*Speed+Voltage*obj.TorqueConstant/obj.WindingResistance-obj.TorqueLoss;
+        function [Torque, Current] = calc_MotorTorqueCurrent(obj,Voltage,Speed)
+            %motor Torque Speed Curve
+            Torque = -1*obj.BackEMFConstant*obj.TorqueConstant/obj.WindingResistance*Speed+Voltage*obj.TorqueConstant/obj.WindingResistance-obj.TorqueLoss;
 
-                %motor torque constant
-                Current = (Torque+obj.TorqueLoss)/obj.TorqueConstant;
-                %limit motor current to max current
-                if Current > obj.MaxCurrent
-                    Current = obj.MaxCurrent;
-                    %need to recalculate torque based off of current limit
-                    Torque = Current*obj.TorqueConstant-obj.TorqueLoss;
-                end
-                if Current < 0
-                    Current = 0;
-                    Torque = -obj.TorqueLoss;
-                end
-            else
-                Torque = 0;
+            %motor torque constant
+            Current = (Torque+obj.TorqueLoss)/obj.TorqueConstant;
+            %limit motor current to max current
+            if Current > obj.MaxCurrent
+                Current = obj.MaxCurrent;
+                %need to recalculate torque based off of current limit
+                Torque = Current*obj.TorqueConstant-obj.TorqueLoss;
+            end
+            if Current < 0
                 Current = 0;
+                Torque = -obj.TorqueLoss;
             end
         end
 
@@ -206,7 +201,7 @@ classdef Motor_c < handle %goofy matlab class inheritance
             if savef
                 savefig([obj.OutputFolder  Delimiter()  'MotorTorqueSpeed.fig'])
             end
-            saveas(gcf,[obj.OutputFolder Delimiter() 'TorqueSpeedCurve.png'])
+            saveas(gcf,[obj.OutputFolder Delimiter() 'MotorTorqueSpeed.png'])
             close
         end
 
