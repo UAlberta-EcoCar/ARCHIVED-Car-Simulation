@@ -49,5 +49,22 @@ classdef BuckConverter_c < handle %goofy matlab class inheritance
         function CurrentIn = calc_CurrentIn(obj,CurrentOut,Throttle)
             CurrentIn = CurrentOut*Throttle/100/obj.Efficiency;
         end
+        
+        function plot_VoltageCurrentTime(obj,savef)
+            figure()
+            plot(obj.TimeEllapsed,obj.VoltageIn)
+            hold on
+            plot(obj.TimeEllapsed,obj.VoltageOut)
+            plot(obj.TimeEllapsed,obj.CurrentIn)
+            plot(obj.TimeEllapsed,obj.CurrentOut)
+            xlabel('Time (s)')
+            ylabel('Voltage (V) or Current(Amps)')
+            title('BuckConverter')
+            if savef
+                savefig([obj.OutputFolder Delimiter() 'BuckConverter.fig'])
+            end
+            saveas(gcf,[obj.OutputFolder Delimiter() 'BuckConverter.png'])
+            close
+        end
     end
 end

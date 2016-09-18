@@ -7,7 +7,7 @@ if ~exist(Folder,'dir')
 end
 %% Simulation Details %%
 savef = 0; %change to 1 to save .fig as well as .png
-SimulationTime = 60; %seconds
+SimulationTime = 120; %seconds
 TimeInterval = 0.01; %time step/integration interval %make a lot smaller than total inertia to decrease motor speed integration error
 
 DataPoints = floor(SimulationTime/TimeInterval);
@@ -16,7 +16,7 @@ DataPoints = floor(SimulationTime/TimeInterval);
 ef = ExcelReader_c();
 ef.ParseMotorFile('Motor List.xlsx');
 ef.ParseFCFile('FC List.xlsx');
-GearRatios = [ 10 12 14 15 16 17 18 19 20 22 ];
+GearRatios = [ 10 11 12 13 14 15 16 17 18 19 20 21 22 ];
 
 %% Excel file output %%
 efo = ExcelWriter([ Folder Delimiter() 'Summary Report']);
@@ -99,7 +99,7 @@ for m = 1:(ef.NumberMotors)
             % NumberOfTeethDriven / NumberOfTeethDriving
             car.GearRatio = GearRatio; %unitless
             % efficency of gears (based off friction etc)
-            car.GearEfficiency = 0.8; % spur gears usually over 90%
+            car.GearEfficiency = 0.9; % spur gears usually over 90%
             % total mass of everything
             car.Mass = 115; %kg 
             car.WheelDiameter = 0.478; % m
@@ -132,9 +132,9 @@ for m = 1:(ef.NumberMotors)
                 end
 
                 %% Make Plots %%
-                track.plot_Profile(savef);
+                track.plot_Profile(savef)
                 
-                motor.plot_TorqueSpeedCurve(savef);
+                motor.plot_TorqueSpeedCurve(savef)
                 motor.plot_TorqueSpeed(savef)
                 motor.plot_PowerSpeed(savef)
                 motor.plot_EfficiencySpeed(savef)
@@ -143,7 +143,7 @@ for m = 1:(ef.NumberMotors)
                 motor.plot_CurrentTime(savef)
                 motor.plot_VoltageTime(savef)
 
-                fuelcell.plot_FCCurve(savef);
+                fuelcell.plot_FCCurve(savef)
                 fuelcell.plot_StackVoltageCurrent(savef)
                 fuelcell.plot_StackEfficiency(savef)
                 fuelcell.plot_StackCurrentTime(savef)
@@ -157,6 +157,8 @@ for m = 1:(ef.NumberMotors)
                 supercaps.plot_VoltageCharge(savef)
                 supercaps.plot_ChargeTime(savef)
                 supercaps.plot_CurrentTime(savef)
+                
+                buckconverter.plot_VoltageCurrentTime(savef)
 
                 Simulation.plot_PowerCurves(fuelcell,motor,supercaps,OutputFolder,savef)
 

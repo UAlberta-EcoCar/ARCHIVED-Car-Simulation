@@ -2,7 +2,7 @@ classdef Simulation_c < handle %goofy matlab class inheritance
     %%%% SIMULATION %%%%
     properties
         LowSpeedThres = 25;
-        ZeroTo20Time = 25;
+        ZeroTo20Time = 20;
     end
     
     methods
@@ -64,10 +64,7 @@ classdef Simulation_c < handle %goofy matlab class inheritance
 
                 fuelcell.StackEnergyProduced(n) = fuelcell.StackEnergyProduced(n-1) + fuelcell.calc_StackEnergyProduced(fuelcell.StackVoltage(n),fuelcell.StackCurrent(n),TimeInterval);
                 fuelcell.StackEnergyConsumed(n) = fuelcell.StackEnergyConsumed(n-1) + fuelcell.calc_StackEnergyConsumed(fuelcell.StackCurrent(n),TimeInterval);
-% 
-%                 if car.Speed>(25/3.6)
-%                     Throttle = Throttle*0.999;
-%                 end
+
             end
 
             %% These calculations can be vectorized instead of being in for loop %%
