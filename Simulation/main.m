@@ -48,7 +48,7 @@ for m = 1:(ef.NumberMotors)
             motor.MaxCurrent = 60; %Amp
             %calculate other motor parameters
             motor.calc_MissingMotorConstants();
-            motor.set_BoostModes(0,0.25,0.5);
+            motor.set_BoostModes(0,0.25,0.405*2);
             motor.ThermalTimeConstantWinding = 68.5; %seconds
             
             %% BuckConvert / Motor Controller %%
@@ -95,7 +95,7 @@ for m = 1:(ef.NumberMotors)
             %create super capacitor object
             supercaps = SuperCapacitor_c(SimulationTime,TimeInterval,OutputFolder);
             %set super capacitor parameters
-            supercaps.Capacitance = 19.3*2;
+            supercaps.Capacitance = 19.3*3;
 
 
             %% CAR %%
@@ -166,7 +166,8 @@ for m = 1:(ef.NumberMotors)
                 supercaps.plot_CurrentTime(savef)
                 
                 buckconverter.plot_VoltageCurrentTime(savef)
-
+                buckconverter.plot_PowerTime(savef)
+                
                 Simulation.plot_PowerCurves(fuelcell,motor,supercaps,OutputFolder,savef)
 
                 %Save data to .mat

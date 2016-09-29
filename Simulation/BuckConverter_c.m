@@ -67,5 +67,21 @@ classdef BuckConverter_c < handle %goofy matlab class inheritance
             saveas(gcf,[obj.OutputFolder Delimiter() 'BuckConverter.png'])
             close
         end
+        
+        function plot_PowerTime(obj,savef)
+            figure()
+            plot(obj.TimeEllapsed,obj.VoltageIn.*obj.CurrentIn)
+            hold on
+            plot(obj.TimeEllapsed,obj.VoltageOut.*obj.CurrentOut)
+            xlabel('Time (s)')
+            ylabel('Power (W)')
+            title('BuckConverter')
+            legend('PowerIn','PowerOut')
+            if savef
+                savefig([obj.OutputFolder Delimiter() 'BuckConverterPower.fig'])
+            end
+            saveas(gcf,[obj.OutputFolder Delimiter() 'BuckConverterPower.png'])
+            close
+        end
     end
 end

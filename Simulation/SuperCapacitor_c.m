@@ -97,5 +97,19 @@ classdef SuperCapacitor_c < handle %goofy matlab class inheritance
             saveas(gcf,[obj.OutputFolder Delimiter() 'SuperCapCurrentTime.png'])
             close
         end
+        
+        function plot_VoltageTime(obj,savef)
+            figure()
+            plot(obj.TimeEllapsed,obj.Voltage)
+            xlabel('Times (S)')
+            ylabel('Voltage')
+            title('SuperCaps')
+            if savef
+                savefig([obj.OutputFolder Delimiter() 'SuperCapVoltageTime.fig'])
+            end
+            saveas(gcf,[obj.OutputFolder Delimiter() 'SuperCapVoltageTime.png'])
+            close
+        end
+
     end
 end

@@ -19,7 +19,8 @@ classdef Simulation2_c < handle %goofy matlab class inheritance
 
             supercap.Charge(1) = supercap.calc_Charge(fuelcell.StackVoltage(1)-fuelcell.DiodeVoltageDrop);
             supercap.Voltage(1) = supercap.calc_Voltage(supercap.Charge(1));
-
+            
+            OverHeatTimer = 0;
 
             %% Solve Differential Equations Numerically in for Loop %%
             for n = 2:DataPoints
@@ -27,11 +28,18 @@ classdef Simulation2_c < handle %goofy matlab class inheritance
                 motor.Speed(n) = car.Speed(n) / car.WheelDiameter * 2 * car.GearRatio;
                 
                 if car.Speed(n) > 6.1
-                    Mode = 0;                    
+                    Mode = 0;         
+                    OverHeatTimer = 0;
                 elseif (car.Speed(n) > 5.5) && (car.Speed(n) < 5.7)
                     Mode = 1;
+                    OverHeatTimer = 0;
                 elseif car.Speed(n) < 5.3
                     Mode = 2;
+                    OverHeatTimer = OverHeatTimer + TimeInterval;
+                end
+                
+                if OverHeatTimer > motor.ThermalTimeConstantWinding*0.4
+                    disp('Hey motor is going to melt')
                 end
                 
                 [motor.Torque(n),motor.Voltage(n),motor.Current(n)] = motor.calc_TorqueControlledMotor(motor.Speed(n),Mode);
@@ -53,7 +61,7 @@ classdef Simulation2_c < handle %goofy matlab class inheritance
                 buckconverter.VoltageOut(n) = motor.Voltage(n);
                 buckconverter.CurrentOut(n) = motor.Current(n);
                 buckconverter.VoltageIn(n) = supercap.Voltage(n-1);
-                buckconverter.CurrentIn(n) = buckconverter.VoltageOut(n)*buckconverter.VoltageOut(n)/buckconverter.VoltageIn(n)/buckconverter.Efficiency;
+                buckconverter.CurrentIn(n) = buckconverter.VoltageOut(n)*buckconverter.CurrentOut(n)/buckconverter.VoltageIn(n)/buckconverter.Efficiency;
                 
                 %fuel cell current is a function of voltage
                 fuelcell.StackCurrent(n) = fuelcell.calc_StackCurrent(fuelcell.StackVoltage(n-1));
