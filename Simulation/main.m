@@ -7,7 +7,7 @@ if ~exist(Folder,'dir')
 end
 %% Simulation Details %%
 savef = 0; %change to 1 to save .fig as well as .png
-SimulationTime = 120; %seconds
+SimulationTime = 600; %seconds
 TimeInterval = 0.01; %time step/integration interval %make a lot smaller than total inertia to decrease motor speed integration error
 
 DataPoints = floor(SimulationTime/TimeInterval);
@@ -16,7 +16,7 @@ DataPoints = floor(SimulationTime/TimeInterval);
 ef = ExcelReader_c();
 ef.ParseMotorFile('Motor List.xlsx');
 ef.ParseFCFile('FC List.xlsx');
-GearRatios = [ 10 11 12 13 14 15 16 17 18 19 20 21 22 ];
+GearRatios = [ 20 ];
 
 %% Excel file output %%
 efo = ExcelWriter([ Folder Delimiter() 'Summary Report']);
@@ -48,6 +48,8 @@ for m = 1:(ef.NumberMotors)
             motor.MaxCurrent = 60; %Amp
             %calculate other motor parameters
             motor.calc_MissingMotorConstants();
+            motor.set_BoostModes(0,0.25,0.5);
+            motor.ThermalTimeConstantWinding = 68.5; %seconds
             
             %% BuckConvert / Motor Controller %%
             buckconverter = BuckConverter_c(SimulationTime,TimeInterval,OutputFolder);
@@ -74,9 +76,14 @@ for m = 1:(ef.NumberMotors)
             %set track parameters
             distance = [ 0	16.0934	32.1868	48.2802	64.3736	80.467	96.5604	112.6538	128.7472	144.8406	160.934	177.0274	193.1208	209.2142	225.3076	241.401	257.4944	273.5878	289.6812	292.89988	296.11856	299.33724	302.55592	305.7746	313.8213	321.868	337.9614	354.0548	370.1482	386.2416	402.335	418.4284	434.5218	450.6152	466.7086	482.802	498.8954	514.9888	531.0822	547.1756	563.269	579.3624	595.4558	611.5492	627.6426	643.736	659.8294	675.9228	692.0162	708.1096	724.203	740.2964	756.3898	772.4832	788.5766	804.67	820.7634	836.8568	852.9502	869.0436	877.0903	885.137	893.1837	901.2304	909.2771	917.3238	925.3705	933.4172	941.4639	949.5106 ];
             incline = [ 0.5	0.4	0.7	0.5	0.7	0.9	0.7	0.6	0.6	0.8	0.3	-0.7	-1.1	-0.4	0.3	0.1	-0.8	-0.6	-0.5	-0.5	-1.4	-2.4	-3.3	-2.3	-1.5	-1.8	-1.7	-1.6	-0.9	-0.6	-0.9	-1.2	-1.9	-0.9	0.2	-0.5	-0.5	-0.5	-0.5	0.2	1	1.1	1	0.9	0.3	-1	0.2	0	-0.1	-0.2	-0.2	0	0.2	-0.8	-0.5	0	-0.5	-0.8	-0.6	-1.7	-1.5	3.2	1	5.5	4.2	3.9	4.2	4.2	3.2	1.2 ];
+            %multiply to multple laps
+            incline = [ incline incline(2:end) incline(2:end) incline(2:end) ];
+            distance = [ distance distance(2:end)+distance(end) distance(2:end)+2*distance(end) distance(2:end)+3*distance(end) ];
+            %calc track length
             track.TrackLength = ceil(max(distance));
             track.Incline = pchip(distance,incline,1:track.TrackLength)'; %pchip interpolation to smooth curve and calculate points over even 1m intervals
-            track.Incline = zeros(track.TrackLength,1);
+            %convert %slope to degrees
+            track.Incline = atand(track.Incline / 100);
             
             track.RelativeHumidity = 50; %%
             track.Temperature = 30; %Celcius
@@ -88,7 +95,7 @@ for m = 1:(ef.NumberMotors)
             %create super capacitor object
             supercaps = SuperCapacitor_c(SimulationTime,TimeInterval,OutputFolder);
             %set super capacitor parameters
-            supercaps.Capacitance = 19.3*4;
+            supercaps.Capacitance = 19.3*2;
 
 
             %% CAR %%
@@ -116,10 +123,10 @@ for m = 1:(ef.NumberMotors)
             car.FrontalArea = 0.45; %m^2
 
             %make new instance of Simulation class
-            Simulation = Simulation_c();
+            Simulation = Simulation2_c();
             Simulation.run_Simulation(motor,buckconverter,fuelcell,car,track,supercaps,DataPoints,TimeInterval);
             
-            if Simulation.check_Viability(fuelcell,motor,supercaps,car,TimeInterval)
+            if 1
                 disp('Car runs successfully')
                 if ~exist(Folder2,'dir')
                     mkdir(Folder2)

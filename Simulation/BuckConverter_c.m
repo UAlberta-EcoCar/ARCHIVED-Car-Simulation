@@ -60,6 +60,7 @@ classdef BuckConverter_c < handle %goofy matlab class inheritance
             xlabel('Time (s)')
             ylabel('Voltage (V) or Current(Amps)')
             title('BuckConverter')
+            legend('VoltageIn','VoltageOut','CurrentIn','CurrentOut')
             if savef
                 savefig([obj.OutputFolder Delimiter() 'BuckConverter.fig'])
             end

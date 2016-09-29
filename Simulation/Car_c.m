@@ -51,7 +51,7 @@ classdef Car_c < handle %goofy matlab class inheritance
             obj.DataPoints = floor(SimulationTime/TimeInterval);         
 
             %make time array for plotting
-            obj.TimeEllapsed = (1:obj.DataPoints)*TimeInterval';
+            obj.TimeEllapsed = (1:obj.DataPoints)'*TimeInterval;
 
             %Allocate RAM
             obj.Acceleration = zeros(obj.DataPoints,1);
@@ -95,6 +95,9 @@ classdef Car_c < handle %goofy matlab class inheritance
             xlabel('Time')
             ylabel('Speed (km.h)')
             title('Car')
+            hold on
+            plot(obj.TimeEllapsed, obj.DistanceTravelled./obj.TimeEllapsed*3.6);
+            legend('Instantaneous','Average')
             if savef
                 savefig([obj.OutputFolder Delimiter() 'CarSpeedTime.fig'])
             end

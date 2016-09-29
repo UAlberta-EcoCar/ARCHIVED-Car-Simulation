@@ -29,7 +29,16 @@ classdef Motor_c < handle %goofy matlab class inheritance
         NoLoadCurrent = 0;
         %torque losses from motor (Nm) "iddle torque"
         TorqueLoss = 0;
-
+        
+        %Thermal time constant (how long does it take to melt motor when
+        %runing above torque rating)
+        ThermalTimeConstantWinding = 0;
+        
+        %Torque Modes
+        Torque0 = 0;
+        Torque1 = 0;
+        Torque2 = 0;
+        
         %Some controllers limit motor current set that here
         MaxCurrent = 1000;
 
@@ -157,7 +166,34 @@ classdef Motor_c < handle %goofy matlab class inheritance
             obj.Efficiency = obj.PowerOut ./ obj.PowerIn;
             obj.Efficiency(obj.PowerIn == 0) = 0;
         end
-
+        
+        %Torque Control
+        function obj = set_BoostModes(obj,Torque0,Torque1,Torque2)
+            obj.Torque0 = Torque0;
+            obj.Torque1 = Torque1;
+            obj.Torque2 = Torque2;
+        end
+        
+        function [MotorTorque, MotorVoltage, MotorCurrent ] = calc_TorqueControlledMotor(obj,MotorSpeed,Mode)
+            switch(Mode)
+                case 0
+                    %motor off
+                    MotorTorque = obj.Torque0;
+                    MotorCurrent = 0;
+                    MotorVoltage= 0;
+                case 1
+                    %optimal boost mode
+                    MotorTorque = obj.Torque1;
+                    MotorCurrent = MotorTorque / obj.TorqueConstant;
+                    MotorVoltage = MotorTorque*obj.WindingResistance/obj.TorqueConstant+obj.TorqueConstant*MotorSpeed;
+                case 2
+                    %max boost mode
+                    MotorTorque = obj.Torque2;
+                    MotorCurrent = MotorTorque / obj.TorqueConstant;
+                    MotorVoltage = MotorTorque*obj.WindingResistance/obj.TorqueConstant+obj.TorqueConstant*MotorSpeed;
+            end
+        end
+        
         %Unit Conversions
         function rad_per_Vs = rpm_per_V_2_rad_per_Vs(~,rpm_per_V)
             rad_per_Vs = rpm_per_V / 60 * 2 * pi;
