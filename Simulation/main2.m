@@ -8,7 +8,7 @@ end
 %% Simulation Details %%
 savef = 0; %change to 1 to save .fig as well as .png
 SimulationTime = 800; %seconds
-TimeInterval = 0.01; %time step/integration interval %make a lot smaller than total inertia to decrease motor speed integration error
+TimeInterval = 0.001; %time step/integration interval %make a lot smaller than total inertia to decrease motor speed integration error
 
 DataPoints = floor(SimulationTime/TimeInterval);
 
@@ -25,7 +25,8 @@ motor = Motor_c(SimulationTime,TimeInterval,OutputFolder);
 
 %% Set Motor Constants %%
 %Velocity constant, Torque constant, BackEMFConstant are all related only need one https://en.wikipedia.org/wiki/Motor_constants
-motor.VelocityConstant = motor.rpm_per_V_2_rad_per_Vs(); % rad/Vs
+motor.TorqueConstant = 0.0385; % Nm/A
+motor.WindingResistance = 0.103;
 
 motor.MaxSpeed = motor.rpm_2_rad_per_s(5680);
 motor.StallTorque = 8.92;
@@ -34,8 +35,10 @@ motor.MaxVoltage = 24;
 
 %calculate other motor parameters
 motor.calc_MissingMotorConstants();
-motor.set_BoostModes(0,0.25,0.405*2);
+
+motor.set_BoostModes(0,0.25,0.405);
 motor.ThermalTimeConstantWinding = 68.5; %seconds
+
 
 %% BuckConvert / Motor Controller %%
 buckconverter = BuckConverter_c(SimulationTime,TimeInterval,OutputFolder);
@@ -54,6 +57,7 @@ fuelcell.CellOCVoltage = 1.02; %open circuit voltage
 fuelcell.DiodeVoltageDrop = 0.5;
 fuelcell.AuxCurrent = 2; %current consumed by controllers, fans etc (everything except motor)
 fuelcell.build_VoltageCurrentCurve();
+
 
 %% TRACK %%
 %create track object
@@ -81,7 +85,7 @@ track.AirDensity = track.calc_AirDensity();
 %create super capacitor object
 supercaps = SuperCapacitor_c(SimulationTime,TimeInterval,OutputFolder);
 %set super capacitor parameters
-supercaps.Capacitance = 19.3*3;
+supercaps.Capacitance = 19.3*6;
 
 
 %% CAR %%

@@ -12,7 +12,7 @@ classdef FuelCell_c < handle %goofy matlab class inheritance
         ExchangeCurrentDensity = 0;
         CellOCVoltage = 0;
         DiodeVoltageDrop = 0;
-        TheoreticalCellVoltage = 1.48;
+        TheoreticalCellVoltage = 1.23;
 
         Faraday = 96485; %Faraday C/mol
         RealGas = 8.314462; %J/molK
@@ -127,7 +127,8 @@ classdef FuelCell_c < handle %goofy matlab class inheritance
         function [StackEnergyConsumed] = calc_StackEnergyConsumed(obj,Current,Time)
             StackEnergyConsumed = obj.TheoreticalCellVoltage*obj.CellNumber*Current*Time;
         end
-
+        
+        
         %Plotting
         function plot_FCCurve(obj,savef)
             figure()

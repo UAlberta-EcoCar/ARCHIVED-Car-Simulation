@@ -122,7 +122,7 @@ classdef Car_c < handle %goofy matlab class inheritance
             figure()
             plot(obj.TimeEllapsed, obj.InstantaneousMilage)
             xlabel('Time')
-            ylabel('Milage km/kwh')
+            ylabel('MPGe')
             title('Instantaneous Milage')
             hold on 
             plot(obj.TimeEllapsed, obj.AverageMilage)

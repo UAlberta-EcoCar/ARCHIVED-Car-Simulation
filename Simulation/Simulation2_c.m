@@ -3,13 +3,18 @@ classdef Simulation2_c < handle %goofy matlab class inheritance
     properties
         LowSpeedThres = 25;
         ZeroTo20Time = 20;
+        
+        SpeedCtrl1 = 4.9;
+        SpeedCtrl2 = 5.1;
+        SpeedCtrl3 = 5.3;
+        SpeedCtrl4 = 6.5;
     end
     
     methods
         function obj = Simulation2_c()
             %empty class constructor
         end
-        function run_Simulation(~,motor,buckconverter,fuelcell,car,track,supercap,DataPoints,TimeInterval)
+        function obj = run_Simulation(obj,motor,buckconverter,fuelcell,car,track,supercap,DataPoints,TimeInterval)
             %Starting Simulation
 
             %% initial conditions %%
@@ -27,13 +32,13 @@ classdef Simulation2_c < handle %goofy matlab class inheritance
                 car.Speed(n) = car.Speed(n-1) + car.Acceleration(n-1)*TimeInterval;
                 motor.Speed(n) = car.Speed(n) / car.WheelDiameter * 2 * car.GearRatio;
                 
-                if car.Speed(n) > 6.1
+                if car.Speed(n) > obj.SpeedCtrl4
                     Mode = 0;         
                     OverHeatTimer = 0;
-                elseif (car.Speed(n) > 5.5) && (car.Speed(n) < 5.7)
+                elseif (car.Speed(n) > obj.SpeedCtrl2) && (car.Speed(n) < obj.SpeedCtrl3)
                     Mode = 1;
                     OverHeatTimer = 0;
-                elseif car.Speed(n) < 5.3
+                elseif car.Speed(n) < obj.SpeedCtrl1
                     Mode = 2;
                     OverHeatTimer = OverHeatTimer + TimeInterval;
                 end
@@ -65,17 +70,15 @@ classdef Simulation2_c < handle %goofy matlab class inheritance
                 
                 %fuel cell current is a function of voltage
                 fuelcell.StackCurrent(n) = fuelcell.calc_StackCurrent(fuelcell.StackVoltage(n-1));
-                supercap.Charge(n) = supercap.DrainCaps(supercap.Charge(n),-1*fuelcell.StackCurrent(n),TimeInterval);
                 
                 supercap.Current(n) = buckconverter.CurrentIn(n)+fuelcell.AuxCurrent-fuelcell.StackCurrent(n); %buckconverter and aux drain caps fuelcell supplys caps
                 supercap.Charge(n) = supercap.DrainCaps(supercap.Charge(n-1),supercap.Current(n),TimeInterval);
                 
-                supercap.Voltage(n) = supercap.calc_Voltage(supercap.Charge(n))+fuelcell.DiodeVoltageDrop;
-                fuelcell.StackVoltage(n) = supercap.Voltage(n);
+                supercap.Voltage(n) = supercap.calc_Voltage(supercap.Charge(n));
+                fuelcell.StackVoltage(n) = supercap.Voltage(n)+fuelcell.DiodeVoltageDrop;
                 
                 fuelcell.StackEnergyProduced(n) = fuelcell.StackEnergyProduced(n-1) + fuelcell.calc_StackEnergyProduced(fuelcell.StackVoltage(n),fuelcell.StackCurrent(n),TimeInterval);
                 fuelcell.StackEnergyConsumed(n) = fuelcell.StackEnergyConsumed(n-1) + fuelcell.calc_StackEnergyConsumed(fuelcell.StackCurrent(n),TimeInterval);
-                
             end
 
             %% These calculations can be vectorized instead of being in for loop %%
@@ -87,13 +90,13 @@ classdef Simulation2_c < handle %goofy matlab class inheritance
             fuelcell.calc_StackPowerOut();
             %calculate fuelcell efficiency curve
             fuelcell.calc_StackEfficiency();
-
+            
             %super capacitor current
             supercap.calc_PowerOut();
 
             %instantaneous driving efficiency -> power into motor vs speed
-            car.InstantaneousMilage = car.Speed * 3.6  ./ (fuelcell.CellNumber*fuelcell.TheoreticalCellVoltage*fuelcell.StackCurrent / 1000); %km / kWh
-            car.AverageMilage = car.DistanceTravelled / 1000 ./ (fuelcell.StackEnergyConsumed / 1000 / 1000 / 3.6); %km / kWh
+            car.InstantaneousMilage = Calculate_Efficiency(car.Speed,fuelcell.StackCurrent);
+            car.AverageMilage = Calculate_Efficiency(car.DistanceTravelled,fuelcell.StackEnergyConsumed/fuelcell.TheoreticalCellVoltage/fuelcell.CellNumber);
         end
 
         %% Check whether gear / fc / motor combination is viable

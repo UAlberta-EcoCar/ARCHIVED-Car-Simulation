@@ -30,6 +30,8 @@ classdef Motor_c < handle %goofy matlab class inheritance
         %torque losses from motor (Nm) "iddle torque"
         TorqueLoss = 0;
         
+        StallTorque = 0;
+        
         %Thermal time constant (how long does it take to melt motor when
         %runing above torque rating)
         ThermalTimeConstantWinding = 0;
@@ -185,12 +187,12 @@ classdef Motor_c < handle %goofy matlab class inheritance
                     %optimal boost mode
                     MotorTorque = obj.Torque1;
                     MotorCurrent = MotorTorque / obj.TorqueConstant;
-                    MotorVoltage = MotorTorque*obj.WindingResistance/obj.TorqueConstant+obj.TorqueConstant*MotorSpeed;
+                    MotorVoltage = (MotorSpeed+obj.MaxSpeed/obj.StallTorque*MotorTorque)/obj.VelocityConstant;
                 case 2
                     %max boost mode
                     MotorTorque = obj.Torque2;
                     MotorCurrent = MotorTorque / obj.TorqueConstant;
-                    MotorVoltage = MotorTorque*obj.WindingResistance/obj.TorqueConstant+obj.TorqueConstant*MotorSpeed;
+                    MotorVoltage = (MotorSpeed+obj.MaxSpeed/obj.StallTorque*MotorTorque)/obj.VelocityConstant;
             end
         end
         
