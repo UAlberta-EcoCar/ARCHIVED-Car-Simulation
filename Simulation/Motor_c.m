@@ -135,7 +135,7 @@ classdef Motor_c < handle %goofy matlab class inheritance
                     disp('Unable to Calculate Motor Losses')
                 end
             end
-            if obj.TorqueLoss <= 0
+            if obj.TorqueLoss < 0
                 disp('Warning: Torque Loss Term Less Than Zero. Check motor Parameters!')
             end
         end

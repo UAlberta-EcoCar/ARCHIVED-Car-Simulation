@@ -37,7 +37,6 @@ classdef Simulation2_c < handle %goofy matlab class inheritance
                     OverHeatTimer = 0;
                 elseif (car.Speed(n) > obj.SpeedCtrl2) && (car.Speed(n) < obj.SpeedCtrl3)
                     Mode = 1;
-                    OverHeatTimer = 0;
                 elseif car.Speed(n) < obj.SpeedCtrl1
                     Mode = 2;
                     OverHeatTimer = OverHeatTimer + TimeInterval;

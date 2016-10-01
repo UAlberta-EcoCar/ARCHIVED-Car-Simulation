@@ -7,12 +7,12 @@ if ~exist(Folder,'dir')
 end
 %% Simulation Details %%
 savef = 0; %change to 1 to save .fig as well as .png
-SimulationTime = 800; %seconds
+SimulationTime = 300; %seconds
 TimeInterval = 0.001; %time step/integration interval %make a lot smaller than total inertia to decrease motor speed integration error
 
 DataPoints = floor(SimulationTime/TimeInterval);
 
-GearRatio = 20;
+GearRatio = 17;
 
 
 Folder2 = [ Folder Delimiter() 'Maxon 370354' ];
@@ -27,8 +27,9 @@ motor = Motor_c(SimulationTime,TimeInterval,OutputFolder);
 %Velocity constant, Torque constant, BackEMFConstant are all related only need one https://en.wikipedia.org/wiki/Motor_constants
 motor.TorqueConstant = 0.0385; % Nm/A
 motor.WindingResistance = 0.103;
+motor.VelocityConstant = motor.rpm_per_V_2_rad_per_Vs(248);
 
-motor.MaxSpeed = motor.rpm_2_rad_per_s(5680);
+motor.MaxSpeed = motor.rpm_2_rad_per_s(5952);%5680);
 motor.StallTorque = 8.92;
 
 motor.MaxVoltage = 24;
@@ -36,7 +37,7 @@ motor.MaxVoltage = 24;
 %calculate other motor parameters
 motor.calc_MissingMotorConstants();
 
-motor.set_BoostModes(0,0.25,0.405);
+motor.set_BoostModes(0,0.25,0.405*3);
 motor.ThermalTimeConstantWinding = 68.5; %seconds
 
 
