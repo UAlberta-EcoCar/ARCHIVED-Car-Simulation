@@ -159,8 +159,8 @@ if 1
     buckconverter.plot_PowerTime(savef)
 
     Simulation.plot_PowerCurves(fuelcell,motor,supercaps,OutputFolder,savef)
+    Simulation.plot_PowerSlopeTime
 
     %Save data to .mat
     save([OutputFolder Delimiter() 'Motor1' '_' 'FC1' '_' 'GearRatio' int2str(GearRatio) ])
-
 end

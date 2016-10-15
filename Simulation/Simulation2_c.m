@@ -144,5 +144,32 @@ classdef Simulation2_c < handle %goofy matlab class inheritance
             saveas(gcf,[OutputFolder Delimiter() 'PowerOutputs.png'])
             close
         end
-    end
+        %% Power of Wheel and Super Caps + Slope vs Time
+        function plot_PowerSlopeTime(track,supercaps,OutputFolder,savef)
+            figure()
+            time1 = 0:TimeInterval:SimulationTime;
+            title('Power of Wheels/Supercaps and Slope as a function of Time');
+            ax1 = gca; % current axes
+            ax1.XColor = 'k';
+            ax1.YColor = 'b';
+            ax1.XLim = [0, SimulationTime];
+            ax1.YLabel.String = 'Power (W)';
+            ax1.YLim = [min(supercaps_power) max(supercaps_power)];
+            ax1_pos = ax1.Position;
+            % hLine1=line(time1,TBuff,'Color','b');
+            % L{1}='(Buffer.Temp)';
+
+            ax2 = axes('Position',ax1_pos,...
+                'YAxisLocation','right',...
+                'Color','none');
+            ax2.YLabel.String = 'Slope';
+            ax2.YLim = [min(track_incline) max(track_incline)];
+            ax2.YColor = [1,0.3,0];
+            % hLine3=line(time1,QBuff_watts,'Parent',ax2,'Color',[1,0.3,0]);
+            % L{3}='(Q.Buffer)';
+            xlabel('{\it Time}');
+            % make legend
+            legend('Location','NorthEast')
+            saveas(gcf,[OutputFolder Delimiter() 'PowerSlopeTime.png'])
+        end
 end
