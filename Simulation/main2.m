@@ -129,37 +129,37 @@ if 1
     end
 
     %% Make Plots %%
-    track.plot_Profile(savef)
-
-    motor.plot_TorqueSpeedCurve(savef)
-    motor.plot_TorqueSpeed(savef)
-    motor.plot_PowerSpeed(savef)
-    motor.plot_EfficiencySpeed(savef)
-    motor.plot_SpeedTime(savef)
-    motor.plot_TorqueTime(savef)
-    motor.plot_CurrentTime(savef)
-    motor.plot_VoltageTime(savef)
-
-    fuelcell.plot_FCCurve(savef)
-    fuelcell.plot_StackVoltageCurrent(savef)
-    fuelcell.plot_StackEfficiency(savef)
-    fuelcell.plot_StackCurrentTime(savef)
-
-    car.plot_DistanceTime(savef)
-    car.plot_SpeedTime(savef)
-    car.plot_AccelerationTime(savef)
-    car.plot_Milage(savef)
-    car.plot_Drag(savef)
-
-    supercaps.plot_VoltageCharge(savef)
-    supercaps.plot_ChargeTime(savef)
-    supercaps.plot_CurrentTime(savef)
-    supercaps.plot_VoltageTime(savef)
-    buckconverter.plot_VoltageCurrentTime(savef)
-    buckconverter.plot_PowerTime(savef)
-
-    Simulation.plot_PowerCurves(fuelcell,motor,supercaps,OutputFolder,savef)
-    Simulation.plot_PowerSlopeTime
+%     track.plot_Profile(savef)
+% 
+%     motor.plot_TorqueSpeedCurve(savef)
+%     motor.plot_TorqueSpeed(savef)
+%     motor.plot_PowerSpeed(savef)
+%     motor.plot_EfficiencySpeed(savef)
+%     motor.plot_SpeedTime(savef)
+%     motor.plot_TorqueTime(savef)
+%     motor.plot_CurrentTime(savef)
+%     motor.plot_VoltageTime(savef)
+% 
+%     fuelcell.plot_FCCurve(savef)
+%     fuelcell.plot_StackVoltageCurrent(savef)
+%     fuelcell.plot_StackEfficiency(savef)
+%     fuelcell.plot_StackCurrentTime(savef)
+% 
+%     car.plot_DistanceTime(savef)
+%     car.plot_SpeedTime(savef)
+%     car.plot_AccelerationTime(savef)
+%     car.plot_Milage(savef)
+%     car.plot_Drag(savef)
+% 
+%     supercaps.plot_VoltageCharge(savef)
+%     supercaps.plot_ChargeTime(savef)
+%     supercaps.plot_CurrentTime(savef)
+%     supercaps.plot_VoltageTime(savef)
+%     buckconverter.plot_VoltageCurrentTime(savef)
+%     buckconverter.plot_PowerTime(savef)
+% 
+%     Simulation.plot_PowerCurves(fuelcell,motor,supercaps,OutputFolder,savef)
+    plot_PowerSlopeTime(track,supercaps,OutputFolder, SimulationTime, TimeInterval)
 
     %Save data to .mat
     save([OutputFolder Delimiter() 'Motor1' '_' 'FC1' '_' 'GearRatio' int2str(GearRatio) ])
