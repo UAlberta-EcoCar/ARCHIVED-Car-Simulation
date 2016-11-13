@@ -4,10 +4,10 @@ classdef Simulation2_c < handle %goofy matlab class inheritance
         LowSpeedThres = 25;
         ZeroTo20Time = 20;
         
-        SpeedCtrl1 = 4.9;
-        SpeedCtrl2 = 5.1;
-        SpeedCtrl3 = 5.3;
-        SpeedCtrl4 = 6.5;
+        SpeedCtrl1 = 4;
+        SpeedCtrl2 = 5;
+        SpeedCtrl3 = 5.5;
+        SpeedCtrl4 = 6;
     end
     
     methods
@@ -49,7 +49,7 @@ classdef Simulation2_c < handle %goofy matlab class inheritance
                 [motor.Torque(n),motor.Voltage(n),motor.Current(n)] = motor.calc_TorqueControlledMotor(motor.Speed(n),Mode);
                 
                 car.AirDrag(n) = car.calc_AirDrag(track.AirDensity,car.Speed(n));
-                car.Acceleration(n) = (motor.Torque(n)/car.WheelDiameter*2*car.GearRatio*car.GearEfficiency-car.Mass*sin(track.calc_Incline(car.DistanceTravelled(n-1))/180*pi)*9.81-car.AirDrag(n)-car.TireDrag-car.BearingDrag) / car.Mass;
+                car.Acceleration(n) = (motor.Torque(n)/car.WheelDiameter*2*car.GearRatio*car.GearEfficiency-car.Mass*sin(track.calc_Incline(track.TrackPosition(n-1))/180*pi)*9.81-car.AirDrag(n)-car.TireDrag-car.BearingDrag) / car.Mass;
                 
                 %stop car from moving backwards if oposing forces are too high
                 if car.Acceleration(n) < 0
@@ -60,6 +60,10 @@ classdef Simulation2_c < handle %goofy matlab class inheritance
                 end
                 
                 car.DistanceTravelled(n) = car.DistanceTravelled(n-1) + car.Speed(n-1)*TimeInterval;
+                track.TrackPosition(n) = track.TrackPosition(n-1) + car.Speed(n-1)*TimeInterval;
+                if track.TrackPosition(n)>track.LapDistance
+                    track.TrackPosition(n)=track.TrackPosition(n)-track.LapDistance;
+                end
                 
                 %run motor voltage in reverse through buckconverter
                 buckconverter.VoltageOut(n) = motor.Voltage(n);
@@ -134,14 +138,39 @@ classdef Simulation2_c < handle %goofy matlab class inheritance
             plot(motor.TimeEllapsed,motor.PowerIn)
             plot(motor.TimeEllapsed,motor.PowerOut)
             plot(supercaps.TimeEllapsed,supercaps.PowerOut)
+            plot(supercaps.TimeEllapsed,supercaps.PowerOut+fuelcell.StackPowerOut)
             xlabel('Time (s)')
             ylabel('Power (W)')
             title('Power Time Series Comparison')
-            legend('FuelCell','MotorIn','MotorOut','SuperCaps')            
+            legend('FuelCell','MotorIn','MotorOut','SuperCaps','FC+CAPS')            
             if savef
                 savefig([OutputFolder Delimiter() 'PowerOutputs.fig'])
             end
             saveas(gcf,[OutputFolder Delimiter() 'PowerOutputs.png'])
+            close
+        end
+        
+        function plot_Driving(~,fuelcell,motor,supercaps,track,car,OutputFolder,savef)
+            figure()
+            %make a vector of incline wrt time
+            incline = zeros(size(track.TrackPosition));
+            for n=1:length(track.TrackPosition)
+                incline(n) = track.calc_Incline(track.TrackPosition(n));
+            end
+            subplot 311
+            plot(car.TimeEllapsed,incline);
+            ylabel('Incline')
+            subplot 312
+            plot(car.TimeEllapsed,car.Speed);
+            ylabel('Speed')
+            subplot 313
+            plot(motor.TimeEllapsed,motor.PowerOut)
+            ylabel('Motor Out (W)')
+            xlabel('Seconds')
+            if savef
+                savefig([OutputFolder Delimiter() 'Driving.fig'])
+            end
+            saveas(gcf,[OutputFolder Delimiter() 'Driving.png'])
             close
         end
     end

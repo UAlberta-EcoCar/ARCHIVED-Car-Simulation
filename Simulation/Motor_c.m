@@ -255,6 +255,19 @@ classdef Motor_c < handle %goofy matlab class inheritance
             saveas(gcf,[obj.OutputFolder Delimiter() 'MotorEfficiencySpeed.png'])
             close
         end
+        
+        function plot_EfficiencyTime(obj,savef)
+            figure()
+            plot( obj.TimeEllapsed, obj.Efficiency )
+            xlabel('Time (s)')
+            ylabel('Efficiency')
+            title('Motor')
+            if savef
+                savefig([obj.OutputFolder Delimiter() 'MotorEfficiency.fig'])
+            end
+            saveas(gcf,[obj.OutputFolder Delimiter() 'MotorEfficiency.png'])
+            close
+        end
 
         function plot_PowerSpeed(obj,savef)
             figure()

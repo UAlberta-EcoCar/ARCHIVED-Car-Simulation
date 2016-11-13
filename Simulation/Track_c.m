@@ -15,13 +15,14 @@ classdef Track_c < handle %goofy matlab class inheritance
         DataPoints = '';
         SimulationTime = [];
         TimeInterval = [];
-        TrackLength = [];
-
+        LapDistance = 0;
+        TrackPosition = 0;
+        
         %Variable arrays
     end
     
     methods 
-        function obj = Track_c(SimulationTime,TimeInterval,TrackLength,OutputFolder)
+        function obj = Track_c(SimulationTime,TimeInterval,OutputFolder)
             %classdef constructor
 
             obj.OutputFolder = OutputFolder;
@@ -29,9 +30,6 @@ classdef Track_c < handle %goofy matlab class inheritance
             obj.DataPoints = floor(SimulationTime/TimeInterval);
             obj.SimulationTime = SimulationTime;
             obj.TimeInterval = TimeInterval;
-            obj.TrackLength = TrackLength;
-            %Allocate RAM
-            obj.Incline = zeros(TrackLength,1);
         end
 
         function [AirDensity] = calc_AirDensity(obj)

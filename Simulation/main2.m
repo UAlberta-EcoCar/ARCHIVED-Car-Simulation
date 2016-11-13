@@ -6,9 +6,9 @@ if ~exist(Folder,'dir')
     mkdir(Folder)
 end
 %% Simulation Details %%
-savef = 0; %change to 1 to save .fig as well as .png
-SimulationTime = 300; %seconds
-TimeInterval = 0.001; %time step/integration interval %make a lot smaller than total inertia to decrease motor speed integration error
+savef = 1; %change to 1 to save .fig as well as .png
+SimulationTime = 500; %seconds
+TimeInterval = 0.005; %time step/integration interval %make a lot smaller than total inertia to decrease motor speed integration error
 
 DataPoints = floor(SimulationTime/TimeInterval);
 
@@ -56,23 +56,20 @@ fuelcell.Alpha = 0.45;
 fuelcell.ExchangeCurrentDensity = 0.04;
 fuelcell.CellOCVoltage = 1.02; %open circuit voltage
 fuelcell.DiodeVoltageDrop = 0.5;
-fuelcell.AuxCurrent = 2; %current consumed by controllers, fans etc (everything except motor)
+fuelcell.AuxCurrent = 1.2; %current consumed by controllers, fans etc (everything except motor)
 fuelcell.build_VoltageCurrentCurve();
 
 
 %% TRACK %%
 %create track object
 TrackLength = 950;
-track = Track_c(SimulationTime,TimeInterval,TrackLength,OutputFolder);
+track = Track_c(SimulationTime,TimeInterval,OutputFolder);
 %set track parameters
 distance = [ 0	16.0934	32.1868	48.2802	64.3736	80.467	96.5604	112.6538	128.7472	144.8406	160.934	177.0274	193.1208	209.2142	225.3076	241.401	257.4944	273.5878	289.6812	292.89988	296.11856	299.33724	302.55592	305.7746	313.8213	321.868	337.9614	354.0548	370.1482	386.2416	402.335	418.4284	434.5218	450.6152	466.7086	482.802	498.8954	514.9888	531.0822	547.1756	563.269	579.3624	595.4558	611.5492	627.6426	643.736	659.8294	675.9228	692.0162	708.1096	724.203	740.2964	756.3898	772.4832	788.5766	804.67	820.7634	836.8568	852.9502	869.0436	877.0903	885.137	893.1837	901.2304	909.2771	917.3238	925.3705	933.4172	941.4639	949.5106 ];
+track.LapDistance=max(distance);
 incline = [ 0.5	0.4	0.7	0.5	0.7	0.9	0.7	0.6	0.6	0.8	0.3	-0.7	-1.1	-0.4	0.3	0.1	-0.8	-0.6	-0.5	-0.5	-1.4	-2.4	-3.3	-2.3	-1.5	-1.8	-1.7	-1.6	-0.9	-0.6	-0.9	-1.2	-1.9	-0.9	0.2	-0.5	-0.5	-0.5	-0.5	0.2	1	1.1	1	0.9	0.3	-1	0.2	0	-0.1	-0.2	-0.2	0	0.2	-0.8	-0.5	0	-0.5	-0.8	-0.6	-1.7	-1.5	3.2	1	5.5	4.2	3.9	4.2	4.2	3.2	1.2 ];
-%multiply to multple laps
-incline = [ incline incline(2:end) incline(2:end) incline(2:end) incline(2:end) incline(2:end) ];
-distance = [ distance distance(2:end)+distance(end) distance(2:end)+2*distance(end) distance(2:end)+3*distance(end) distance(2:end)+4*distance(end) distance(2:end)+5*distance(end) ];
 %calc track length
-track.TrackLength = ceil(max(distance));
-track.Incline = pchip(distance,incline,1:track.TrackLength)'; %pchip interpolation to smooth curve and calculate points over even 1m intervals
+track.Incline = pchip(distance,incline,1:track.LapDistance)'; %pchip interpolation to smooth curve and calculate points over even 1m intervals
 %convert %slope to degrees
 track.Incline = atand(track.Incline / 100);
 
@@ -86,7 +83,7 @@ track.AirDensity = track.calc_AirDensity();
 %create super capacitor object
 supercaps = SuperCapacitor_c(SimulationTime,TimeInterval,OutputFolder);
 %set super capacitor parameters
-supercaps.Capacitance = 19.3*6;
+supercaps.Capacitance = 58/2;
 
 
 %% CAR %%
@@ -107,10 +104,10 @@ car.BearingDragCoefficient = 0.0015; %unitless Standard value for oiled bearings
 car.BearingBoreDiameter = 0.03; %m's
 car.BearingDrag = car.calc_BearingDrag(car.BearingDragCoefficient,car.Mass,car.BearingBoreDiameter,car.WheelDiameter);
 %https://en.wikipedia.org/wiki/Rolling_resistance
-car.RollingResistanceCoefficient = 0.002; %Unitless get from tire manufacturer
+car.RollingResistanceCoefficient = 0.00081; %Unitless get from tire manufacturer
 car.TireDrag = car.calc_TireDrag(car.RollingResistanceCoefficient,car.Mass);
 % http://physics.info/drag/
-car.AreodynamicDragCoefficient = 0.16; % standard value for a car
+car.AreodynamicDragCoefficient = 0.09; % standard value for a car
 car.FrontalArea = 0.45; %m^2
 
 %make new instance of Simulation class
@@ -127,39 +124,42 @@ if 1
     if ~exist(OutputFolder,'dir')
         mkdir(OutputFolder)
     end
-
+    
     %% Make Plots %%
     track.plot_Profile(savef)
-
+    
     motor.plot_TorqueSpeedCurve(savef)
     motor.plot_TorqueSpeed(savef)
     motor.plot_PowerSpeed(savef)
     motor.plot_EfficiencySpeed(savef)
+    motor.plot_EfficiencyTime(savef)
     motor.plot_SpeedTime(savef)
     motor.plot_TorqueTime(savef)
     motor.plot_CurrentTime(savef)
     motor.plot_VoltageTime(savef)
-
+    
     fuelcell.plot_FCCurve(savef)
     fuelcell.plot_StackVoltageCurrent(savef)
     fuelcell.plot_StackEfficiency(savef)
     fuelcell.plot_StackCurrentTime(savef)
-
+    
     car.plot_DistanceTime(savef)
     car.plot_SpeedTime(savef)
     car.plot_AccelerationTime(savef)
     car.plot_Milage(savef)
     car.plot_Drag(savef)
-
+    
     supercaps.plot_VoltageCharge(savef)
     supercaps.plot_ChargeTime(savef)
     supercaps.plot_CurrentTime(savef)
     supercaps.plot_VoltageTime(savef)
     buckconverter.plot_VoltageCurrentTime(savef)
     buckconverter.plot_PowerTime(savef)
-
+    
     Simulation.plot_PowerCurves(fuelcell,motor,supercaps,OutputFolder,savef)
-
+    Simulation.plot_Driving(fuelcell,motor,supercaps,track,car,OutputFolder,savef)
+    
+    
     %Save data to .mat
     save([OutputFolder Delimiter() 'Motor1' '_' 'FC1' '_' 'GearRatio' int2str(GearRatio) ])
 
