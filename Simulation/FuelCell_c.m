@@ -18,6 +18,8 @@ classdef FuelCell_c < handle %goofy matlab class inheritance
         RealGas = 8.314462; %J/molK
 
         AuxCurrent = 0;
+        AuxCurrentHigh = 0;
+        AuxCurrentLow = 0;
         StackTemperature = 300;
 
         %Variable Arrays
@@ -179,6 +181,28 @@ classdef FuelCell_c < handle %goofy matlab class inheritance
                 savefig([obj.OutputFolder Delimiter() 'FuelcellStackCurrentTime.fig'])
             end
             saveas(gcf,[obj.OutputFolder Delimiter() 'FuelcellStackCurrentTime.png'])
+            close
+        end
+        
+        function plot_PowerCurves(obj,savef)
+            figure()
+            subplot 311
+            plot(obj.CurveI,obj.CurveV);
+            title('Voltage, Current, Power Relations')
+            ylabel('Voltage (V)')
+            xlabel('Current (A)')
+            subplot 312
+            plot(obj.CurveI,obj.CurveI.*obj.CurveV);
+            ylabel('Power (W)')
+            xlabel('Current (A)')
+            subplot 313
+            plot(obj.CurveV,obj.CurveI.*obj.CurveV);
+            ylabel('Power (W)')
+            xlabel('Voltage (V)')
+            if savef
+                savefig([obj.OutputFolder Delimiter() 'FuelcellVCPower.fig'])
+            end
+            saveas(gcf,[obj.OutputFolder Delimiter() 'FuelcellVCPower.png'])
             close
         end
     end

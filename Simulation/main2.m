@@ -7,7 +7,7 @@ if ~exist(Folder,'dir')
 end
 %% Simulation Details %%
 savef = 1; %change to 1 to save .fig as well as .png
-SimulationTime = 500; %seconds
+SimulationTime = 1000; %seconds
 TimeInterval = 0.005; %time step/integration interval %make a lot smaller than total inertia to decrease motor speed integration error
 
 DataPoints = floor(SimulationTime/TimeInterval);
@@ -57,6 +57,8 @@ fuelcell.ExchangeCurrentDensity = 0.04;
 fuelcell.CellOCVoltage = 1.02; %open circuit voltage
 fuelcell.DiodeVoltageDrop = 0.5;
 fuelcell.AuxCurrent = 1.2; %current consumed by controllers, fans etc (everything except motor)
+fuelcell.AuxCurrentLow = 0.5; %current consumed with fans off
+fuelcell.AuxCurrentHigh = 1.5; %current with fans on
 fuelcell.build_VoltageCurrentCurve();
 
 
@@ -142,6 +144,7 @@ if 1
     fuelcell.plot_StackVoltageCurrent(savef)
     fuelcell.plot_StackEfficiency(savef)
     fuelcell.plot_StackCurrentTime(savef)
+    fuelcell.plot_PowerCurves(savef)
     
     car.plot_DistanceTime(savef)
     car.plot_SpeedTime(savef)

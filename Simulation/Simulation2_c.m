@@ -74,6 +74,12 @@ classdef Simulation2_c < handle %goofy matlab class inheritance
                 %fuel cell current is a function of voltage
                 fuelcell.StackCurrent(n) = fuelcell.calc_StackCurrent(fuelcell.StackVoltage(n-1));
                 
+                if fuelcell.StackVoltage(n-1) > 23.95
+                    fuelcell.AuxCurrent = fuelcell.AuxCurrentLow;
+                else
+                    fuelcell.AuxCurrent = fuelcell.AuxCurrentHigh;
+                end
+                
                 supercap.Current(n) = buckconverter.CurrentIn(n)+fuelcell.AuxCurrent-fuelcell.StackCurrent(n); %buckconverter and aux drain caps fuelcell supplys caps
                 supercap.Charge(n) = supercap.DrainCaps(supercap.Charge(n-1),supercap.Current(n),TimeInterval);
                 
