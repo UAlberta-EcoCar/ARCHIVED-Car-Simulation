@@ -37,7 +37,7 @@ motor.MaxVoltage = 24;
 %calculate other motor parameters
 motor.calc_MissingMotorConstants();
 
-motor.set_BoostModes(0,0.25,0.405*3);
+motor.set_BoostModes(0,0.25,0.405);
 motor.ThermalTimeConstantWinding = 68.5; %seconds
 
 
