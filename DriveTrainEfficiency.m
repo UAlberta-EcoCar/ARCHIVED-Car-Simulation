@@ -17,5 +17,5 @@ Cb = 0.0015; %wheel bearing drag
 BearingBore = 0.03;
 BearingDrag = Cb*Mass*9.81*BearingBore/WheelDiameter;
 
-Crr = 0.09; %rolling resistance coefficient
+Crr = 0.0025; %rolling resistance coefficient
 TireDrag =  = Crr*Mass*9.81;
