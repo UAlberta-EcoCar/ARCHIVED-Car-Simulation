@@ -37,7 +37,7 @@ motor.MaxVoltage = 24;
 %calculate other motor parameters
 motor.calc_MissingMotorConstants();
 
-motor.set_BoostModes(0,0.25,0.405);
+motor.set_BoostModes(0,0.25,0.405); %torque levels motor runs at
 motor.ThermalTimeConstantWinding = 68.5; %seconds
 
 
@@ -64,16 +64,23 @@ fuelcell.build_VoltageCurrentCurve();
 
 %% TRACK %%
 %create track object
-TrackLength = 950;
 track = Track_c(SimulationTime,TimeInterval,OutputFolder);
-%set track parameters
+
+%set detroit track incline characterisitics
 distance = [ 0	16.0934	32.1868	48.2802	64.3736	80.467	96.5604	112.6538	128.7472	144.8406	160.934	177.0274	193.1208	209.2142	225.3076	241.401	257.4944	273.5878	289.6812	292.89988	296.11856	299.33724	302.55592	305.7746	313.8213	321.868	337.9614	354.0548	370.1482	386.2416	402.335	418.4284	434.5218	450.6152	466.7086	482.802	498.8954	514.9888	531.0822	547.1756	563.269	579.3624	595.4558	611.5492	627.6426	643.736	659.8294	675.9228	692.0162	708.1096	724.203	740.2964	756.3898	772.4832	788.5766	804.67	820.7634	836.8568	852.9502	869.0436	877.0903	885.137	893.1837	901.2304	909.2771	917.3238	925.3705	933.4172	941.4639	949.5106 ];
 track.LapDistance=max(distance);
 incline = [ 0.5	0.4	0.7	0.5	0.7	0.9	0.7	0.6	0.6	0.8	0.3	-0.7	-1.1	-0.4	0.3	0.1	-0.8	-0.6	-0.5	-0.5	-1.4	-2.4	-3.3	-2.3	-1.5	-1.8	-1.7	-1.6	-0.9	-0.6	-0.9	-1.2	-1.9	-0.9	0.2	-0.5	-0.5	-0.5	-0.5	0.2	1	1.1	1	0.9	0.3	-1	0.2	0	-0.1	-0.2	-0.2	0	0.2	-0.8	-0.5	0	-0.5	-0.8	-0.6	-1.7	-1.5	3.2	1	5.5	4.2	3.9	4.2	4.2	3.2	1.2 ];
-%calc track length
 track.Incline = pchip(distance,incline,1:track.LapDistance)'; %pchip interpolation to smooth curve and calculate points over even 1m intervals
 %convert %slope to degrees
 track.Incline = atand(track.Incline / 100);
+
+%flat track (comment previous section and uncomment this section)
+distance = [0 100];
+incline = [0 0];
+track.Incline = pchip(distance,incline,1:track.LapDistance)'; %pchip interpolation to smooth curve and calculate points over even 1m intervals
+%convert %slope to degrees
+track.Incline = atand(track.Incline / 100);
+
 
 track.RelativeHumidity = 50; %%
 track.Temperature = 30; %Celcius
@@ -98,7 +105,7 @@ car.GearRatio = GearRatio; %unitless
 % efficency of gears (based off friction etc)
 car.GearEfficiency = 0.9; % spur gears usually over 90%
 % total mass of everything
-car.Mass = 115; %kg 
+car.Mass = 37+50; %kg 
 car.WheelDiameter = 0.478; % m
 % Bearing resistance friction coefficient
 car.BearingDragCoefficient = 0.0015; %unitless Standard value for oiled bearings
@@ -109,7 +116,7 @@ car.BearingDrag = car.calc_BearingDrag(car.BearingDragCoefficient,car.Mass,car.B
 car.RollingResistanceCoefficient = 0.00081; %Unitless get from tire manufacturer
 car.TireDrag = car.calc_TireDrag(car.RollingResistanceCoefficient,car.Mass);
 % http://physics.info/drag/
-car.AreodynamicDragCoefficient = 0.09; % standard value for a car
+car.AreodynamicDragCoefficient = 0.09; % I think i got this from james
 car.FrontalArea = 0.45; %m^2
 
 %make new instance of Simulation class
