@@ -75,11 +75,11 @@ track.Incline = pchip(distance,incline,1:track.LapDistance)'; %pchip interpolati
 track.Incline = atand(track.Incline / 100);
 
 %flat track (comment previous section and uncomment this section)
-distance = [0 100];
-incline = [0 0];
-track.Incline = pchip(distance,incline,1:track.LapDistance)'; %pchip interpolation to smooth curve and calculate points over even 1m intervals
+%distance = [0 100];
+%incline = [0 0];
+%track.Incline = pchip(distance,incline,1:track.LapDistance)'; %pchip interpolation to smooth curve and calculate points over even 1m intervals
 %convert %slope to degrees
-track.Incline = atand(track.Incline / 100);
+%track.Incline = atand(track.Incline / 100);
 
 
 track.RelativeHumidity = 50; %%
