@@ -1,4 +1,4 @@
-classdef Simulation2_c < handle %goofy matlab class inheritance
+classdef Simulation3_c < handle %goofy matlab class inheritance
     %%%% SIMULATION %%%%
     properties
         LowSpeedThres = 25;
@@ -18,69 +18,38 @@ classdef Simulation2_c < handle %goofy matlab class inheritance
             %Starting Simulation
 
             %% initial conditions %%
-
             fuelcell.StackCurrent(1) = fuelcell.AuxCurrent;
             fuelcell.StackVoltage(1) = fuelcell.calc_StackVoltage(fuelcell.StackCurrent(1));
-
+            
             supercap.Charge(1) = supercap.calc_Charge(fuelcell.StackVoltage(1)-fuelcell.DiodeVoltageDrop);
             supercap.Voltage(1) = supercap.calc_Voltage(supercap.Charge(1));
             
-            OverHeatTimer = 0;
-
+            
             %% Solve Differential Equations Numerically in for Loop %%
-            for n = 2:DataPoints
+            for n = 2:DataPoints                
+                
                 car.Speed(n) = car.Speed(n-1) + car.Acceleration(n-1)*TimeInterval;
                 motor.Speed(n) = car.Speed(n) / car.WheelDiameter * 2 * car.GearRatio;
                 
-                if car.Speed(n) > obj.SpeedCtrl4
-                    Mode = 0;         
-                    OverHeatTimer = 0;
-                elseif (car.Speed(n) > obj.SpeedCtrl2) && (car.Speed(n) < obj.SpeedCtrl3)
-                    Mode = 1;
-                elseif car.Speed(n) < obj.SpeedCtrl1
-                    Mode = 2;
-                    OverHeatTimer = OverHeatTimer + TimeInterval;
+                if (car.Speed(n)*3.6) < 10
+                    TorqueSetPoint = 0.405*3;
+                else
+                    TorqueSetPoint = 0.405;
                 end
+                    
                 
-                if OverHeatTimer > motor.ThermalTimeConstantWinding*0.4
-                    disp('Hey motor is going to melt')
-                end
+                motor.Voltage(n) = supercap.Voltage(n-1);
+                [motor.Torque(n),motor.Current(n),motor.Voltage(n)] = motor.calc_MotorTorqueCurrentwLimit(motor.Voltage(n),motor.Speed(n-1),TorqueSetPoint);
                 
-                [motor.Torque(n),motor.Voltage(n),motor.Current(n)] = motor.calc_TorqueControlledMotor(motor.Speed(n),Mode);
-                
-                car.AirDrag(n) = car.calc_AirDrag(track.AirDensity,car.Speed(n));
-                car.Acceleration(n) = (motor.Torque(n)/car.WheelDiameter*2*car.GearRatio*car.GearEfficiency-car.Mass*sin(track.calc_Incline(track.TrackPosition(n-1))/180*pi)*9.81-car.AirDrag(n)-car.TireDrag-car.BearingDrag) / car.Mass;
-                
-                %stop car from moving backwards if oposing forces are too high
-                if car.Acceleration(n) < 0
-                    if car.Speed(n) <= 0
-                        car.Acceleration(n) = 0;
-                        car.Speed(n) = 0;
-                    end
-                end
-                
-                car.DistanceTravelled(n) = car.DistanceTravelled(n-1) + car.Speed(n-1)*TimeInterval;
-                track.TrackPosition(n) = track.TrackPosition(n-1) + car.Speed(n-1)*TimeInterval;
-                if track.TrackPosition(n)>track.LapDistance
-                    track.TrackPosition(n)=track.TrackPosition(n)-track.LapDistance;
-                end
-                
-                %run motor voltage in reverse through buckconverter
-                buckconverter.VoltageOut(n) = motor.Voltage(n);
+               
                 buckconverter.CurrentOut(n) = motor.Current(n);
+                buckconverter.VoltageOut(n) = motor.Voltage(n);
                 buckconverter.VoltageIn(n) = supercap.Voltage(n-1);
-                buckconverter.CurrentIn(n) = buckconverter.VoltageOut(n)*buckconverter.CurrentOut(n)/buckconverter.VoltageIn(n)/buckconverter.Efficiency;
+                buckconverter.CurrentIn(n) = buckconverter.CurrentOut(n)*buckconverter.VoltageOut(n)/buckconverter.VoltageIn(n);
                 
-                %fuel cell current is a function of voltage
                 fuelcell.StackCurrent(n) = fuelcell.calc_StackCurrent(fuelcell.StackVoltage(n-1));
                 
-                if fuelcell.StackVoltage(n-1) > 23.95
-                    fuelcell.AuxCurrent = fuelcell.AuxCurrentLow;
-                else
-                    fuelcell.AuxCurrent = fuelcell.AuxCurrentHigh;
-                end
-                
-                supercap.Current(n) = buckconverter.CurrentIn(n)+fuelcell.AuxCurrent-fuelcell.StackCurrent(n); %buckconverter and aux drain caps fuelcell supplys caps
+                supercap.Current(n) = buckconverter.CurrentIn(n) + fuelcell.AuxCurrent - fuelcell.StackCurrent(n);
                 supercap.Charge(n) = supercap.DrainCaps(supercap.Charge(n-1),supercap.Current(n),TimeInterval);
                 
                 supercap.Voltage(n) = supercap.calc_Voltage(supercap.Charge(n));
@@ -89,6 +58,20 @@ classdef Simulation2_c < handle %goofy matlab class inheritance
                 
                 fuelcell.StackEnergyProduced(n) = fuelcell.StackEnergyProduced(n-1) + fuelcell.calc_StackEnergyProduced(fuelcell.StackVoltage(n),fuelcell.StackCurrent(n),TimeInterval);
                 fuelcell.StackEnergyConsumed(n) = fuelcell.StackEnergyConsumed(n-1) + fuelcell.calc_StackEnergyConsumed(fuelcell.StackCurrent(n),TimeInterval);
+                
+                car.AirDrag(n) = car.calc_AirDrag(track.AirDensity,car.Speed(n));
+
+                car.Acceleration(n) = (motor.Torque(n)/car.WheelDiameter*2*car.GearRatio*car.GearEfficiency-car.Mass*sin(track.calc_Incline(car.DistanceTravelled(n-1))/180*pi)*9.81-car.AirDrag(n)-car.TireDrag-car.BearingDrag) / car.Mass;
+
+                %stop car from moving backwards if oposing forces are too high
+                if car.Acceleration(n) < 0
+                    if car.Speed(n) <= 0
+                        car.Acceleration(n) = 0;
+                        car.Speed(n) = 0;
+                    end
+                end
+                car.DistanceTravelled(n) = car.DistanceTravelled(n-1) + car.Speed(n-1)*TimeInterval;
+
             end
 
             %% These calculations can be vectorized instead of being in for loop %%

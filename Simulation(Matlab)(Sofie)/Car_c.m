@@ -62,7 +62,7 @@ classdef Car_c < handle %goofy matlab class inheritance
 
         
         function [AirDrag] = calc_AirDrag(obj,AirDensity,Speed)
-            AirDrag = 0.5*obj.AreodynamicDragCoefficient*obj.FrontalArea*AirDensity*Speed^2;
+            AirDrag = 0.5*obj.AreodynamicDragCoefficient*obj.FrontalArea*AirDensity*Speed.^2;
         end
 
         
@@ -134,7 +134,7 @@ classdef Car_c < handle %goofy matlab class inheritance
             close
         end
 
-        function plot_Drag(obj,savef)
+        function plot_Drag(obj,AirDensity,savef)
             figure()
             plot(obj.TimeEllapsed,obj.AirDrag)
             hold on
@@ -148,6 +148,21 @@ classdef Car_c < handle %goofy matlab class inheritance
                 savefig([obj.OutputFolder Delimiter() 'CarDrag.fig'])
             end
             saveas(gcf,[obj.OutputFolder Delimiter() 'CarDrag.png'])
+            close
+            figure()
+            x = 0:12;
+            plot(x*3.6,obj.calc_AirDrag(AirDensity,x))
+            hold on
+            plot(x*3.6,ones(size(x))*obj.BearingDrag)
+            plot(x*3.6,ones(size(x))*obj.TireDrag)
+            xlabel('Speed (kph)')
+            ylabel('Drag (N)')
+            title('Drag Forces')
+            legend('AirDrag','BearingDrag','TireDrag')
+            if savef
+                savefig([obj.OutputFolder Delimiter() 'CarDragSpeed.fig'])
+            end
+            saveas(gcf,[obj.OutputFolder Delimiter() 'CarDragSpeed.png'])
             close
         end
     end

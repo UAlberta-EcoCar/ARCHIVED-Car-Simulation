@@ -139,11 +139,31 @@ classdef Motor_c < handle %goofy matlab class inheritance
                 disp('Warning: Torque Loss Term Less Than Zero. Check motor Parameters!')
             end
         end
-
+        
+        function [MotorVoltage, MotorCurrent] = calc_VoltCurr(obj,MotorSpeed,MotorTorque)
+            MotorCurrent = (MotorTorque+obj.TorqueLoss) / obj.TorqueConstant;
+            MotorVoltage = (MotorSpeed+obj.MaxSpeed/obj.StallTorque*(MotorTorque+obj.TorqueLoss))/obj.VelocityConstant;
+            %Torque = -1*obj.BackEMFConstant*obj.TorqueConstant/obj.WindingResistance*Speed+Voltage*obj.TorqueConstant/obj.WindingResistance-obj.TorqueLoss;
+        end
+        
+        function [Torque, Current, Voltage ] = calc_MotorTorqueCurrentwLimit(obj,VoltageIn,Speed,TorqueLimit)
+            Torque = -1*obj.BackEMFConstant*obj.TorqueConstant/obj.WindingResistance*Speed+VoltageIn*obj.TorqueConstant/obj.WindingResistance-obj.TorqueLoss;
+            Voltage = VoltageIn;
+            
+            if Torque > TorqueLimit
+                Torque = TorqueLimit;
+                Voltage = ((Torque+obj.TorqueLoss)+obj.BackEMFConstant*obj.TorqueConstant/obj.WindingResistance*Speed)*obj.WindingResistance/obj.TorqueConstant;
+            end
+            
+            Current = (Torque+obj.TorqueLoss)/obj.TorqueConstant;
+        end
+        
         function [Torque, Current] = calc_MotorTorqueCurrent(obj,Voltage,Speed)
             %motor Torque Speed Curve
-            Torque = -1*obj.BackEMFConstant*obj.TorqueConstant/obj.WindingResistance*Speed+Voltage*obj.TorqueConstant/obj.WindingResistance-obj.TorqueLoss;
-
+            %Torque = -1*obj.BackEMFConstant*obj.TorqueConstant/obj.WindingResistance*Speed+Voltage*obj.TorqueConstant/obj.WindingResistance-obj.TorqueLoss;
+            Torque = (Voltage*obj.VelocityConstant-Speed)*obj.StallTorque/obj.MaxSpeed-obj.TorqueLoss;
+            %MotorVoltage = (MotorSpeed+obj.MaxSpeed/obj.StallTorque*(MotorTorque+obj.TorqueLoss))/obj.VelocityConstant;
+            
             %motor torque constant
             Current = (Torque+obj.TorqueLoss)/obj.TorqueConstant;
             %limit motor current to max current

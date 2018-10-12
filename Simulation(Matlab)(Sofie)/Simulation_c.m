@@ -20,7 +20,7 @@ classdef Simulation_c < handle %goofy matlab class inheritance
             supercap.Charge(1) = supercap.calc_Charge(fuelcell.StackVoltage(1)-fuelcell.DiodeVoltageDrop);
             supercap.Voltage(1) = supercap.calc_Voltage(supercap.Charge(1));
 
-            Throttle = 100;
+            Throttle = 10;
 
             %% Solve Differential Equations Numerically in for Loop %%
             for n = 2:DataPoints
