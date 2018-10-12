@@ -5,9 +5,10 @@ Folder = 'output';
 if ~exist(Folder,'dir')
     mkdir(Folder)
 end
+
 %% Simulation Details %%
 savef = 1; %change to 1 to save .fig as well as .png
-SimulationTime = 240; %seconds
+SimulationTime = 40; %seconds
 TimeInterval = 0.001; %time step/integration interval %make a lot smaller than total inertia to decrease motor speed integration error
 
 DataPoints = floor(SimulationTime/TimeInterval);
@@ -15,7 +16,7 @@ DataPoints = floor(SimulationTime/TimeInterval);
 GearRatio = 17;
 
 
-Folder2 = [ Folder Delimiter() 'Maxon 370354' ];
+Folder2 = [ Folder Delimiter() 'Maxon RE 50' ];
 Folder3 = [ Folder2 Delimiter() '28 cell Ballard' ]; 
 OutputFolder = [ Folder3 Delimiter() 'GearRatio' int2str(GearRatio) ];
             
@@ -27,10 +28,8 @@ motor = Motor_c(SimulationTime,TimeInterval,OutputFolder);
 %Velocity constant, Torque constant, BackEMFConstant are all related only need one https://en.wikipedia.org/wiki/Motor_constants
 motor.TorqueConstant = 0.0385; % Nm/A
 motor.WindingResistance = 0.103;
-%motor.VelocityConstant = motor.rpm_per_V_2_rad_per_Vs(248);
 
 motor.MaxSpeed = motor.rpm_2_rad_per_s(5950);%5680);
-%motor.StallTorque = 8.92;
 
 motor.MaxVoltage = 24;
 
@@ -39,6 +38,9 @@ motor.calc_MissingMotorConstants();
 
 motor.set_BoostModes(0,0.405,0.405); %torque levels motor runs at
 motor.ThermalTimeConstantWinding = 68.5; %seconds
+
+motor.BoostTorque = 0.405*3;
+motor.RegularTorque = 0.405;
 
 
 %% BuckConvert / Motor Controller %%
@@ -106,7 +108,7 @@ car.GearRatio = GearRatio; %unitless
 % efficency of gears (based off friction etc)
 car.GearEfficiency = 0.9; % spur gears usually over 90%
 % total mass of everything
-car.Mass = 120; % 37+50; %kg 
+car.Mass = 110; % 37+50; %kg 
 car.WheelDiameter = 0.478; % m
 % Bearing resistance friction coefficient
 car.BearingDragCoefficient = 0.0015; %unitless Standard value for oiled bearings
@@ -122,10 +124,8 @@ car.FrontalArea = 0.45; %m^2
 
 %make new instance of Simulation class
 Simulation = Simulation3_c();
-Simulation.SpeedCtrl1 = 4; %car boosts (mode 1) when under this speed
-Simulation.SpeedCtrl2 = 5; %car goes regular power for speed b/w Crtl2 and Ctrl3
-Simulation.SpeedCtrl3 = 5.5;
-Simulation.SpeedCtrl4 = 50/3.6; %car coasts if over this speed 
+Simulation.BoostSpeedThresh = 15; %kph
+
 
 Simulation.run_Simulation(motor,buckconverter,fuelcell,car,track,supercaps,DataPoints,TimeInterval);
 
@@ -175,7 +175,7 @@ if 1
     buckconverter.plot_PowerTime(savef)
     
     Simulation.plot_PowerCurves(fuelcell,motor,supercaps,OutputFolder,savef)
-    %Simulation.plot_Driving(fuelcell,motor,supercaps,track,car,OutputFolder,savef)
+    Simulation.plot_Driving(fuelcell,motor,supercaps,track,car,OutputFolder,savef)
     
     
     %Save data to .mat

@@ -4,10 +4,8 @@ classdef Simulation3_c < handle %goofy matlab class inheritance
         LowSpeedThres = 25;
         ZeroTo20Time = 20;
         
-        SpeedCtrl1 = 4;
-        SpeedCtrl2 = 5;
-        SpeedCtrl3 = 5.5;
-        SpeedCtrl4 = 6;
+        BoostSpeedThresh = 0;
+        
     end
     
     methods
@@ -31,12 +29,11 @@ classdef Simulation3_c < handle %goofy matlab class inheritance
                 car.Speed(n) = car.Speed(n-1) + car.Acceleration(n-1)*TimeInterval;
                 motor.Speed(n) = car.Speed(n) / car.WheelDiameter * 2 * car.GearRatio;
                 
-                if (car.Speed(n)*3.6) < 10
-                    TorqueSetPoint = 0.405*3;
+                if (car.Speed(n)*3.6) < obj.BoostSpeedThresh
+                    TorqueSetPoint = motor.BoostTorque;
                 else
-                    TorqueSetPoint = 0.405;
+                    TorqueSetPoint = motor.RegularTorque;
                 end
-                    
                 
                 motor.Voltage(n) = supercap.Voltage(n-1);
                 [motor.Torque(n),motor.Current(n),motor.Voltage(n)] = motor.calc_MotorTorqueCurrentwLimit(motor.Voltage(n),motor.Speed(n-1),TorqueSetPoint);
@@ -142,14 +139,9 @@ classdef Simulation3_c < handle %goofy matlab class inheritance
         
         function plot_Driving(~,fuelcell,motor,supercaps,track,car,OutputFolder,savef)
             figure()
-            %make a vector of incline wrt time
-            incline = zeros(size(track.TrackPosition));
-            for n=1:length(track.TrackPosition)
-                incline(n) = track.calc_Incline(track.TrackPosition(n));
-            end
             subplot 311
-            plot(car.TimeEllapsed,incline);
-            ylabel('Incline')
+            plot(car.TimeEllapsed,supercaps.Voltage);
+            ylabel('SuperCap Voltage')
             subplot 312
             plot(car.TimeEllapsed,car.Speed);
             ylabel('Speed')

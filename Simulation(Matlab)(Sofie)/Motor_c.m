@@ -41,6 +41,9 @@ classdef Motor_c < handle %goofy matlab class inheritance
         Torque1 = 0;
         Torque2 = 0;
         
+        BoostTorque = 0;
+        RegularTorque = 0;
+        
         %Some controllers limit motor current set that here
         MaxCurrent = 1000;
 
